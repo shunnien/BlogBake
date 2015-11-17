@@ -1,0 +1,964 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[ShunNien's Blog]]></title>
+  <link href="http://shunnien.github.io/atom.xml" rel="self"/>
+  <link href="http://shunnien.github.io/"/>
+  <updated>2015-11-17T16:11:30+08:00</updated>
+  <id>http://shunnien.github.io/</id>
+  <author>
+    <name><![CDATA[ShunNien Yu(Allen Yu)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Visual Studio 2015 the ViewBag Doesn't Exist in the Current Context]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/13/the-viewbag-doesnt-exist-in-the-current-context/"/>
+    <updated>2015-11-13T21:13:41+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/13/the-viewbag-doesnt-exist-in-the-current-context</id>
+    <content type="html"><![CDATA[<h2>緣起</h2>
+
+<p>今日在操作系統的時候，發現系統不給進行下一個操作，想說怎麼回事？就趕快來查找一下紀錄。
+發現原來是新接手負責的人員，資料沒有照要求輸入(這完全不限制的輸入還是照著需求調整的，<del>真是自作孽</del>)，所以下一環節的處理直接就濾掉了。
+所以後來將此環節的處理放鬆並設定預設資料與例外處理，就把這問題處理掉。
+但是可能一陣子沒開 <strong>Visual Studio 2015</strong>，我的 cshtml 頁面，都會出現小紅線，仔細去看，都是
+<strong>The ViewBag doesn&rsquo;t exist in the current context</strong> 大概這樣的訊息，個人實在討厭這種紅色的訊息，所以還是想把它處理掉。</p>
+
+<h2>處理過程</h2>
+
+<p>印象中，以前 VS2012(Visual Studio 2012) 好像有處理過相同的問題，這一看就是 <strong>ASP.NET MVC</strong> 的元件引用有問題，可是查看 output 居然沒訊息 orz&hellip;。
+好吧，開個安全模式建立一個新 MVC 專案看看是不是那專案是不是有調整，使用指令碼開啟安全模式，記得要在 VS2015(Visual Studio 2015)執行檔的路徑下執行</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>devenv /safemode</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="http://shunnien.github.io/files/2015-11-14/2015-11-14_00-40-50.png" alt="VS2015 safemode" /></p>
+
+<p>開啟結果，還是有紅色訊息。只好去 StackOverflow 找一下，發現了<a href="http://stackoverflow.com/questions/31232394/why-does-vs2015rc-says-the-viewbag-doesnt-exist-in-the-current-context-where" title="StackOverflow:Why does VS2015RC says “The ViewBag doesn't exist in the current context”, where as VS2013 says no errors?">Why does VS2015RC says&hellip;</a>(這名稱有點長，我就省略了)，可以在每個<code>.cshtml</code>檔案引用</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>@inherits System.Web.Mvc.WebViewPage&lt;dynamic&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p></p>
+
+<p>引用後，的確紅線的提醒消失了，但是要每一頁去引用，簡直是無法想像呀，所以這方法果斷放棄。
+仔細想一想，要是我重新把 <strong>ASP.NET MVC</strong> 元件重新安裝，應該會好吧，可是不太想進行這動作，查詢了一下，看到<a href="http://bjkeizer.blogspot.tw/2015/01/the-name-viewbag-does-not-exist-in.html" title="sign me out:The name 'ViewBag' does not exist in the current context">這篇</a>說出解決方式是更新 MVC 元件或是修改 config，把 System.Web.Mvc 手動變更。
+原本我已經打算按照這方式進行了，但是後來看到<a href="http://stackoverflow.com/questions/31581666/visual-studio-2015-broken-razor-intellisense" title="StackOverflow:Visual Studio 2015 Broken Razor Intellisense">這篇</a>，抱持著我只進行這重設 userdata 的動作就好，結果我的 VS2015就好了</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>devenv.exe /resetuserdata</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>參考資料</h2>
+
+<ul>
+<li><a href="http://stackoverflow.com/questions/31232394/why-does-vs2015rc-says-the-viewbag-doesnt-exist-in-the-current-context-where" title="StackOverflow:Why does VS2015RC says “The ViewBag doesn't exist in the current context”, where as VS2013 says no errors?">StackOverflow:Why does VS2015RC says&hellip;</a></li>
+<li><a href="http://bjkeizer.blogspot.tw/2015/01/the-name-viewbag-does-not-exist-in.html" title="sign me out:The name 'ViewBag' does not exist in the current context">sign me out:The name &lsquo;ViewBag&rsquo; does not exist in the current context</a></li>
+<li><a href="http://stackoverflow.com/questions/31581666/visual-studio-2015-broken-razor-intellisense" title="StackOverflow:Visual Studio 2015 Broken Razor Intellisense">StackOverflow:Visual Studio 2015 Broken Razor Intellisense</a></li>
+<li><a href="http://www.asp.net/mvc/overview/releases/how-to-upgrade-an-aspnet-mvc-4-and-web-api-project-to-aspnet-mvc-5-and-web-api-2">The ASP.NET Site:How to Upgrade an ASP.NET MVC 4 &hellip; to ASP.NET MVC 5 &hellip;</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress 加入 Category(分類)]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/12/octopress-jia-ru-category-fen-lei/"/>
+    <updated>2015-11-12T11:05:23+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/12/octopress-jia-ru-category-fen-lei</id>
+    <content type="html"><![CDATA[<h2>緣起</h2>
+
+<p>部落格文章一旦變多起來，就需要進行整理，而且為了讓慣看的人能夠快速簡單的找尋，最好進行分類列表，所以經由官網上的說明套入 Category 插件。</p>
+
+<h2>找尋套件</h2>
+
+<p>先搜尋一下 Octopress 對於 Category 的相關套件，發現這篇文章 <a href="http://time.to.pullthepl.ug/blog/2012/8/20/octopress-top-categories-plugin/" title="Time To Pull The Plug:Octopress Top Categories Plugin">Octopress Top Categories Plugin</a>，看到該篇文章中提到有人開發了 <a href="https://github.com/alswl/octopress-category-list" title="alswl octopress-category-list">octopress-category-list</a> 這套件，這個套件也是作者 Fork <a href="https://github.com/tokkonopapa/octopress-tagcloud">octopress-tagcloud</a> 調整而來的，此篇<a href="https://github.com/ctdk/octopress-category-list" title="ctdk octopress-category-list">文章作者自己又 Fork 調整了一版</a>，我就偷懶一點直接 Fork 作者自己調整的這版，這樣之後我就可以直接變動<a href="https://github.com/shunnien/octopress-category-list" title="shunnien octopress-category-list">我的版本</a>。</p>
+
+<h2>安裝套件</h2>
+
+<p>這部份很簡易，請<a href="https://github.com/shunnien/octopress-category-list" title="shunnien octopress-category-list">到此</a>直接下載，或是直接 git clone 一份，等下要把檔案複製到您的 octopress 資料夾下
+<img src="http://shunnien.github.io/files/2015-11-12/2015-11-12_12-04-15.png" alt="Github Download ZIP" /></p>
+
+<p>在剛剛下載的檔案中可以看到以下檔案</p>
+
+<h2>Files:</h2>
+
+<pre><code>.
+├───plugins
+│   └── category_list.rb
+└───source
+    ├───categories
+    │   └── index.markdown
+    └───_includes
+        └───custom
+            ├───navigation.html
+            └───asides
+                ├─ category_cloud.html
+                ├─ category_list.html
+                └─ category_cloud.html
+</code></pre>
+
+<p>這些檔案按照同樣的路徑放到您的 octopress 資料夾下，先把<code>category_list.rb</code>這檔案放到 plugins 資料夾下，這是 plugin 的核心 code。
+接著修改您的<code>_config.yml</code>，在<code>default_asides</code>增加套件的 html 檔案路徑與名稱，就是 <em>category_cloud.html、category_list.html、category_cloud.html</em> 這三個檔案，這個是設定側邊欄位的顯示。示範如下</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>default_asides: [
+</span><span class='line'>  asides/recent_posts.html, 
+</span><span class='line'>  custom/asides/top_category_list.html, 
+</span><span class='line'>  custom/asides/category_cloud.html, 
+</span><span class='line'>  custom/asides/category_list.html, 
+</span><span class='line'>  asides/github.html, 
+</span><span class='line'>  asides/googleplus.html
+</span><span class='line'>]</span></code></pre></td></tr></table></div></figure>
+
+
+<p>接著建立頁面上方的選單
+<img src="http://shunnien.github.io/files/2015-11-12/2015-11-12_12-16-54.png" alt="blog menu link" /></p>
+
+<p>請參照上方的 Files tree，將 source 資料夾下的 categories 複製到您的 octopress/source 下，再把 navigation.html 複製到您的資料夾下，確認每個檔案都按照路徑複製就可以了。</p>
+
+<blockquote><p>上述的步驟太複雜的話，教大家簡單的方式：
+將下載的 octopress-category-list 檔案開啟後，複製 plugins 跟 source 資料夾，貼上自己的 octopress 資料夾下</p></blockquote>
+
+<h2>執行</h2>
+
+<p>一樣使用指令碼進行觀看</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake preview</span></code></pre></td></tr></table></div></figure>
+
+
+<p>完成的話，直接發布了</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>碎碎念</h2>
+
+<p>其實後來在看 <a href="http://kaworu.github.io/octostrap3/">octostrap3</a>，在考慮要不要使用，看起來的版面挺漂亮的，可能等以後再使用了～</p>
+
+<h2>參考資料</h2>
+
+<ul>
+<li><a href="https://github.com/tokkonopapa/octopress-tagcloud">octopress-tagcloud</a></li>
+<li><a href="http://time.to.pullthepl.ug/blog/2012/8/20/octopress-top-categories-plugin/" title="Time To Pull The Plug:Octopress Top Categories Plugin">Time To Pull The Plug:Octopress Top Categories Plugin</a></li>
+<li><a href="http://www.nealsheeran.com/archives/2013/01/octopress-category-list/">Neal Sheeran:Octopress Category List</a></li>
+<li><a href="http://wen00072.github.io/blog/2015/03/31/add-categories-list-plugin-to-octopress/" title="My code works, I don’t know why.:Add Categories List Plugin to Octopress">My code works, I don’t know why.:Add Categories List Plugin to Octopress</a></li>
+<li><a href="http://blog.eddie.com.tw/2011/12/05/add-catetories-to-sidebar-in-octopress/">高見龍:幫你的 Octopress 增加文章分類</a></li>
+<li><a href="https://github.com/alswl/octopress-category-list" title="alswl octopress-category-list">alswl octopress-category-list</a></li>
+<li><a href="https://github.com/ctdk/octopress-category-list" title="ctdk octopress-category-list">ctdk octopress-category-list</a></li>
+<li><a href="https://github.com/shunnien/octopress-category-list" title="shunnien octopress-category-list">shunnien octopress-category-list</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress 更換 License(footer)]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/11/litopress-geng-huan-license-footer/"/>
+    <updated>2015-11-11T16:44:05+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/11/litopress-geng-huan-license-footer</id>
+    <content type="html"><![CDATA[<h2>緣起</h2>
+
+<p>現在網路上大家都很注重產權，因此應該在 footer 標示授權，而且還可以自己更動一下 footer</p>
+
+<h2><a href="http://creativecommons.org/">Creative Commons</a></h2>
+
+<p>首先建立自己的授權資訊，因此進入 <a href="http://creativecommons.org/">Creative Commons</a> 連結，點選 <strong>Licenses</strong> 的選單，出現下拉選單後，選擇 <strong>Choose a License</strong>
+<img src="http://shunnien.github.io/files/2015-11-11/2015-11-11_16-58-17.png" alt="CC Index munu choose" /></p>
+
+<p>此頁面有提供多語言轉換，所以頁面底下可以選擇看的懂的語言。
+<img src="http://shunnien.github.io/files/2015-11-11/2015-11-11_17-00-41.png" alt="CC choose language" /></p>
+
+<p>設定完成後，按照頁面上的指示，複製這一段 code，貼到您想更動的位置就可以
+<img src="http://shunnien.github.io/files/2015-11-11/2015-11-11_17-04-14.png" alt="CC copy area" /></p>
+
+<h2>Octopress footer 更動</h2>
+
+<p>首先找到們要更動的頁面，我想要放置到 footer 位置，所以到 <em>source/_includes/footer.html</em> 查看一下內容</p>
+
+<figure class='code'><figcaption><span>source/_includes/footer.html</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'>include custom/footer.html
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>可以看出此頁面加入了 <em>custom/footer.html</em> 這個檔案，所以查看該檔案</p>
+
+<figure class='code'><figcaption><span>custom/footer.html</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;p&gt;</span>
+</span><span class='line'>    Copyright <span class="ni">&amp;copy;</span> 2015-11-17 16:11:30 +0800 - ShunNien Yu(Allen Yu) -
+</span><span class='line'>    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;credit&quot;</span><span class="nt">&gt;</span>Powered by <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;http://octopress.org&quot;</span><span class="nt">&gt;</span>Octopress<span class="nt">&lt;/a&gt;&lt;/span&gt;</span>
+</span><span class='line'><span class="nt">&lt;/p&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>把剛剛上述複製那段放進去，像以下這樣。</p>
+
+<figure class='code'><figcaption><span>custom/footer.html</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;p&gt;</span>
+</span><span class='line'>  <span class="nt">&lt;a</span> <span class="na">rel=</span><span class="s">&quot;license&quot;</span> <span class="na">href=</span><span class="s">&quot;http://creativecommons.org/licenses/by/4.0/&quot;</span><span class="nt">&gt;&lt;img</span> <span class="na">alt=</span><span class="s">&quot;Creative Commons License&quot;</span> <span class="na">style=</span><span class="s">&quot;border-width:0&quot;</span> <span class="na">src=</span><span class="s">&quot;https://i.creativecommons.org/l/by/4.0/88x31.png&quot;</span> <span class="nt">/&gt;&lt;/a&gt;&lt;br</span> <span class="nt">/&gt;</span>This work is licensed under a <span class="nt">&lt;a</span> <span class="na">rel=</span><span class="s">&quot;license&quot;</span> <span class="na">href=</span><span class="s">&quot;http://creativecommons.org/licenses/by/4.0/&quot;</span><span class="nt">&gt;</span>Creative Commons Attribution 4.0 International License<span class="nt">&lt;/a&gt;</span>.
+</span><span class='line'>
+</span><span class='line'>    Copyright <span class="ni">&amp;copy;</span> 2015-11-17 16:11:30 +0800 - ShunNien Yu(Allen Yu) -
+</span><span class='line'>    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;credit&quot;</span><span class="nt">&gt;</span>Powered by <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;http://octopress.org&quot;</span><span class="nt">&gt;</span>Octopress<span class="nt">&lt;/a&gt;&lt;/span&gt;</span>
+</span><span class='line'><span class="nt">&lt;/p&gt;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>最後記得先<code>rake preview</code>觀看一下，確認沒問題再行發布，然後記得版控。</p>
+
+<h2>參考資料</h2>
+
+<ul>
+<li><a href="http://creativecommons.org/">Creative Commons</a></li>
+<li><a href="http://creativecommons.tw/">台灣創用CC計畫</a></li>
+<li><a href="http://octopress.org/">Octopress</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress 設定 Search]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/11/octopress-she-ding-search/"/>
+    <updated>2015-11-11T10:16:22+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/11/octopress-she-ding-search</id>
+    <content type="html"><![CDATA[<h2>_config 設定</h2>
+
+<p>此部分需要注意 <strong>url</strong> 與 <strong>simple_search</strong>，這兩個資料設定，<strong>url</strong> 是您自己的部落格位址，<strong>simple_search</strong> 使用預設值就可以；這些是由 <a href="http://octopress.org/">Octopress</a> 提供的預設搜尋方式，是透過 google 直接搜尋 <strong>url</strong> 這設定值的網站，再查詢這網站裡面有包含查詢關鍵字的頁面。
+<img src="http://shunnien.github.io/files/2015-11-11/2015-11-11_15-13-17.png" alt="_config.yml setting" /></p>
+
+<h2>navigation.html</h2>
+
+<p>除非是想要自訂更動，不然使用預設的搜尋方式的話是不需要變動的，
+此檔案位置在 <em>/source/_includes/navigation.html</em>，需要自訂的話，需要變更 form tag 的部分，如下圖圈選區域。
+<img src="http://shunnien.github.io/files/2015-11-11/2015-11-11_15-40-25.png" alt="navigation.html" />
+這些動作都完成後，就可以進行<code>rake gen_deploy</code>了，就可以看到部落格可以搜尋了。</p>
+
+<h2>注意事項</h2>
+
+<p>當完成上述動作後，發現搜尋沒有結果，有可能是 google 尚未將您的網站登錄，這是 google 有 <a href="https://support.google.com/webmasters/answer/182072?hl=zh-Hant" title="Search Console說明:Googlebot">Googlebot</a> 會自動去搜尋網站登錄至 google 名單裡面；當然您也可以主動進行登錄，可由<a href="https://www.google.com/webmasters/tools/submit-url" title="Google 提交網站">google webmasters</a> 提交。
+提交完成後，可以在 google 搜尋進行搜尋檢查是否成功提交了，搜尋方式示範如下</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>site:yourUrl.github.io</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>參考資料</h2>
+
+<ul>
+<li><a href="http://octopress.org/">Octopress</a></li>
+<li><a href="https://www.google.com/webmasters/" title="Google 網站管理員">Google 網站管理員</a></li>
+<li><a href="https://support.google.com/webmasters/answer/182072?hl=zh-Hant" title="Search Console說明:Googlebot">Search Console說明:Googlebot</a></li>
+<li><a href="http://www.pkthink.com/knowledge-info.asp?id=4" title="耘想科技網頁設計:SEO 網站優化">耘想科技網頁設計:SEO 網站優化</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress 加上 Github Pages 移動部落格到 Github]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/05/octopress-and-github-pages-move-blog-to-github/"/>
+    <updated>2015-11-05T03:12:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/05/octopress-and-github-pages-move-blog-to-github</id>
+    <content type="html"><![CDATA[<h2>我的環境</h2>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>$ systeminfo | findstr /B /C:"作業系統名稱" /C:"作業系統版本" /c:"作業系統設定" /c:"作業系統組建類型" /c:"系統類型" /c:"處理器" /c:"BIOS" /c:"實體記憶體總計" /c:"虛擬記憶體"
+</span><span class='line'>
+</span><span class='line'>作業系統名稱:         Microsoft Windows 10 專業版
+</span><span class='line'>作業系統版本:         10.0.10240 N/A 組建 10240
+</span><span class='line'>作業系統設定:         獨立工作站
+</span><span class='line'>作業系統組建類型:     Multiprocessor Free
+</span><span class='line'>系統類型:             x64-based PC
+</span><span class='line'>處理器:               已安裝 1 處理器。
+</span><span class='line'>BIOS 版本:            American Megatrends Inc. 219, 2015/5/4
+</span><span class='line'>實體記憶體總計:       16,264 MB
+</span><span class='line'>虛擬記憶體: 大小上限: 18,696 MB
+</span><span class='line'>虛擬記憶體: 可用:     10,390 MB
+</span><span class='line'>虛擬記憶體: 使用中:   8,306 MB</span></code></pre></td></tr></table></div></figure>
+
+
+<h2>安裝 <a href="http://octopress.org/">Octopress</a></h2>
+
+<h3>下載 <a href="https://github.com/imathis/octopress" title="Octopress Github">Octopress</a></h3>
+
+<p>請先到 <a href="https://github.com/imathis/octopress" title="Octopress Github">Github</a> 下載或是直接使用指令碼工具，透過指令進行，以下是使用 SSH</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git clone git@github.com:imathis/octopress.git</span></code></pre></td></tr></table></div></figure>
+
+
+<p>要是使用 HTTPS 可以採用以下指令</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git clone https://github.com/imathis/octopress.git</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vclY0V2JCMTFxems" alt="git clone result" /></p>
+
+<h3>安裝 Octopress</h3>
+
+<p>首先要安裝 <a href="http://octopress.org/">Octopress</a> 要透過 ruby，所以請先安裝 ruby，之後透過指令碼工具進行，首先進入剛剛 clone 下來的資料夾位置</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>cd octopress</span></code></pre></td></tr></table></div></figure>
+
+
+<p>接著透過 ruby 進行安裝</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake install</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vUkhETGpTemhsbnM" alt="Octoprss install result" />
+這樣就安裝完成了，可以使用<code>rake preview</code>指令在瀏覽器內觀看，這些指令都是在命令提示字元內執行喔。
+<img src="https://googledrive.com/host/0B24tdidnsV1vNDB0ZWp2UXZpN3c" alt="Octoprss preview" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vb0dIQy0xV29uWjQ" alt="browser preview" />
+按下<code>Ctrl + C</code>可以終止執行</p>
+
+<h3>建立新的 Repository</h3>
+
+<p>沒有 <a href="https://github.com/">Github</a> 帳號的請先註冊喔，這邊都是預設已經擁有 Github 帳號。
+首先，先建立一個新的 Repository
+<img src="https://googledrive.com/host/0B24tdidnsV1vT1JMWHh5akRvY1k" alt="New Repository" />
+這個 Respository 的名稱必須是<code>yourGithubName.github.io</code>，yourGithubName 必須是您在 Github 上面的帳號名稱，然後建立此 Repository
+<img src="https://googledrive.com/host/0B24tdidnsV1vbmt0c0d0Z3FOUkU" alt="Repository name setting" />
+然後請不要關閉完成頁面，等下會用到新建立的 Repository SSH 位址(使用 HTTPS 位址也可以)
+<img src="https://googledrive.com/host/0B24tdidnsV1vUHFnQlBEM0ZERFE" alt="Repository SSH" /></p>
+
+<h3>自己電腦中的 Octopress 發佈(Deploy)到 <a href="https://pages.github.com/">Github Pages</a></h3>
+
+<p>繼續使用命令提示字元，必須在 octopress 資料夾下(您所 clone 的 octopress 位置)，執行以下指令</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake setup_github_pages</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vbk5mYVUzbWRhSW8" alt="setup_github_pages" />
+接著執行</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake generate</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vcVhGMWxVaVRETmc" alt="generate" /></p>
+
+<p>完成之後，就可以進行發佈的指令了</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vb052aGhYWEJWNmc" alt="deploy" /></p>
+
+<p>簡單說明一下，這幾個指令，按照字面應該可以猜得出來，generate 就是產生頁面，deploy 則是發佈出去，setup_github_pages 裡面包含許多設定，有興趣的可以參考 <a href="http://octopress.org/">Octopress</a> 的說明。發佈完成後，檢查一下網址 <code>http:yourGithubName.github.io/</code>，yourGithubName 就是你建立 Repository name
+<img src="https://googledrive.com/host/0B24tdidnsV1vR1ZxcTBITHFSN1k" alt="deploy browser preview" /></p>
+
+<p>最後，記得把原始檔案進行版控，放到 source branch 吧。</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git add .
+</span><span class='line'>git commit -m "您所要輸入的備註內容"
+</span><span class='line'>git push origin source</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vTnRuOVBSWGU1U3c" alt="git to source" /></p>
+
+<p>這樣就完成您的部落格了，接著就可以使用 markdown 語法撰寫您的文章。</p>
+
+<h3>部落格設定</h3>
+
+<p>有兩個方式，一個是下指令，一個是直接更改 <em>config.yml 這個檔案，想經由指令進行更動的話，可以參考一下 Octopress 上面的 <a href="http://octopress.org/docs/configuring/">Configuring Octopress</a> 使用方式，以下說明在 octopress 資料夾下更改 </em>config.yml 檔案的的介紹(這樣更改感覺比較快速一點 XD)。
+首先先到您 clone octopress 路徑下，使用 sublimeText(或是notepad、記事本等其他文本編輯器都可以)開啟，然後直接修改，修改時，記得注意每一個冒號後都要空格，不然等下執行<code>rake generate</code>產生檔案時會發生錯誤，所以這點要注意。接著更動後記得存檔，並執行下列</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake generate
+</span><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vN2gwY09CWkRMOU0" alt="edit _config.yml" /></p>
+
+<p>在執行 <code>rake deploy</code>時，我發生了 <em>LF will be replaced by CRLF</em> 這些錯誤，如果發生這個錯誤，可以試著執行以下指令，把 git 的 aurtocrlf 取消</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>git config --global core.autocrlf false</span></code></pre></td></tr></table></div></figure>
+
+
+<h3>發表文章</h3>
+
+<p>此部分可以參考 <a href="http://octopress.org/docs/blogging/" title="Blogging Basics">Blogging Basics</a>，語法相當簡易，一樣使用指令碼</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake new_post["title"]</span></code></pre></td></tr></table></div></figure>
+
+
+<p>這時候 Octopress 會幫您產生文章檔案，此檔案會放到 <code>source/_posts/</code>這路徑底下，接著您可以使用習慣的文字編輯器，編輯這些文章，編輯結束想觀看文章在部落格上的呈現時，可以使用</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake preview</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上述有提到這個指令的功能，此功能就是模擬一個 web 服務，讓您可以在本機端使用瀏覽器觀看執行結果；有寫過 web 開發的應該不會陌生，這就是本機測試。
+確認完成編輯後，進行 generate 產生需要的設定與檔案，之後發佈</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake generate
+</span><span class='line'>rake deploy</span></code></pre></td></tr></table></div></figure>
+
+
+<p>這兩個語法可以合併使用以下指令，就是上述兩個指令的合併使用</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rake gen_deploy</span></code></pre></td></tr></table></div></figure>
+
+
+<p>差點忘了提醒，記得進行版控喔。</p>
+
+<h4>參考資料：</h4>
+
+<ul>
+<li><a href="http://wen00072-blog.logdown.com/posts/258497-octopress-installed-and-deployed-on-the-github-pages#oct-env" title="國王的耳朵是驢耳朵:安裝octopress並佈署到github pages上面">國王的耳朵是驢耳朵:安裝octopress並佈署到github pages上面</a></li>
+<li><a href="http://zerodie.github.io/blog/2012/01/19/octopress-github-pages/" title="李嘉玲的技術筆記:Github Page + Octopress">李嘉玲的技術筆記:Github Page + Octopress</a></li>
+<li><a href="http://shengmingzhiqing.com/blog/setup-octopress-with-github-pages.html/" title="生命之氢:Octopress 搭建流程 – Github Pages">生命之氢:Octopress 搭建流程 – Github Pages</a></li>
+<li><a href="http://octopress.org/">Octopress</a></li>
+<li><a href="https://pages.github.com/">Github Pages</a></li>
+<li><a href="http://octopress.org/docs/blogging/" title="Blogging Basics">Blogging Basics</a></li>
+<li><a href="http://octopress.org/docs/configuring/">Configuring Octopress</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[在 Windows 安裝 Ruby on Rails]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/05/in-windwos-install-ruby-on-rails/"/>
+    <updated>2015-11-05T03:10:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/05/in-windwos-install-ruby-on-rails</id>
+    <content type="html"><![CDATA[<h2>緣起</h2>
+
+<p>在 Windows 平台上很久了，今年初為了裝一些套件，就安裝了 Ruby，結果今年都快過完了都沒去玩過，只是為了那些套件安裝順利就裝了 ruby，感覺很浪費呀，所以再裝 Rails 進來玩玩，順手記錄一下安裝的過程，為了記錄，我又重新安裝一次 ruby XD。</p>
+
+<h2>下載安裝檔案 <a href="https://www.ruby-lang.org/zh_tw/" title="Ruby Programming Language">Ruby</a></h2>
+
+<p>首先到<a href="http://rubyinstaller.org/downloads/">RubyInstaller</a>下載安裝檔案，請依照下圖指示進行。
+<img src="https://googledrive.com/host/0B24tdidnsV1vLU4yOXk5RzFGbkk" alt="RubyInstaller Index" />
+到這頁面選擇符合您自己系統的版本，以下是我的安裝版本
+<img src="https://googledrive.com/host/0B24tdidnsV1vYlhqZjJoaXNUcDQ" alt="RubyInstaller Select Version" />
+然後順便下載 DevKit，一樣選擇適合自己的版本，我是選擇 <strong>For use with Ruby 2.0 and above (x64 - 64bits only)</strong>這版本
+<img src="https://googledrive.com/host/0B24tdidnsV1vN2VCZk5ITkI1OEU" alt="Ruby DevKit" /></p>
+
+<h2>安裝 RubyInstaller</h2>
+
+<p>執行剛剛下載的 <strong>RubyInstaller</strong>
+<img src="https://googledrive.com/host/0B24tdidnsV1vd0ZMaGtCa2lUT2c" alt="RubyInstaller Install" />
+勾選接受這<strong> License</strong>
+<img src="https://googledrive.com/host/0B24tdidnsV1vWUVXNUFFbVdOd1E" alt="License" />
+選擇您想要安裝的路徑並勾選 <strong>Add Ruby executables to your PATH</strong> 這個選項，這樣安裝程式會自動設定環境變數，等下就可以直接在指令列上執行。
+<img src="https://googledrive.com/host/0B24tdidnsV1vWUVXNUFFbVdOd1E" alt="Destination" />
+然後稍微等個幾秒
+<img src="https://googledrive.com/host/0B24tdidnsV1vR0dxTFpjSTdOMVk" alt="Installing" />
+就可以看到安裝完成畫面
+<img src="https://googledrive.com/host/0B24tdidnsV1vcW40VFJXelBaWVk" alt="Completing" />
+接著我們開啟命令提示字元，或是<code>Win + R</code>輸入<code>cmd</code>，我以下畫面是使用 <a href="http://blog.miniasp.com/post/2015/09/28/Useful-tool-Cmder.aspx">cmder</a>，畫面看起來不太一樣，但是功能是相同的；命令提示字元開啟後，鍵入<code>ruby -v</code>查看一下 ruby 安裝的版本，應該會是如下圖顯示。
+<img src="https://googledrive.com/host/0B24tdidnsV1vUUZnTVNoN1lGME0" alt="Version Check Success" />
+如果出現[<em>不是內部或外部命令、可執行的程式或批次檔。</em>]這訊息，如下圖所示。
+<img src="https://googledrive.com/host/0B24tdidnsV1vd19vMmZSRm5yTlE" alt="Version Check Failure" />
+可能是剛剛沒有勾選 <strong>Add Ruby executables to your PATH</strong>造成，您可能必須手動設定環境變數，需要進入控制台->系統->進階系統設定->進階->環境變數->系統變數->找尋 <strong>Path</strong> 路徑->編輯，把您的 ruby 安裝路徑增加進去
+<img src="https://googledrive.com/host/0B24tdidnsV1vd1psdVRFajlZME0" alt="Set Path" /></p>
+
+<h2>安裝 DevKit</h2>
+
+<p>執行 DevKit-mingw64-64-4.7.2-20130224-1432-sfx.exe，這檔名超長，選擇您想放置的位置，建議放到<code>C:\RubyDevKit</code>
+<img src="https://googledrive.com/host/0B24tdidnsV1vdERtRi1jUkdtLTA" alt="Set DevKit Path" /></p>
+
+<p>如果都是按照上述建議的話，到<code>C:\RubyDevKit</code>資料夾下(您所解壓縮的位置下)<code>Ctrl + shift + mouse right click</code>選擇開啟命令視窗</p>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vVDBKY1pEa29pVkk" alt="手動設定" /></p>
+
+<p>執行<code>ruby dk.rb init</code>，這指令會產生<strong>config.yml</strong>這檔案，並且會偵測您 ruby 安裝的路徑，直接寫入到 config.yml 檔案中
+<img src="https://googledrive.com/host/0B24tdidnsV1vU2drbjUzZzUyRlU" alt="執行 ruby dk.rb init" /></p>
+
+<p>假如沒有偵測到您的安裝路徑，請手動更改 config.yml 這檔案，用記事本就可以開啟這檔案，按照下圖修改，請修改為您所安裝的路徑，注意路徑語法是<code>- C:/yourRubyPath</code>前面有個小破折號
+<img src="https://googledrive.com/host/0B24tdidnsV1vQXd0aTdvU0RwX0k" alt="設定 Ruby路徑" /></p>
+
+<p>然後執行以下命令，它會更動您 ruby 安裝路徑下的檔案或產生檔案</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ruby dk.rb install</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vVkVHQ0VFT0dUcXM" alt="DevKit Install" /></p>
+
+<h2>安裝 Rails</h2>
+
+<p>接下來使用<code>gem</code>來安裝，所以下指令就可以安裝完成了，直接下指令安裝 rails</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install rails --no-ri --no-rdoc</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安裝完成後，測試一下，看一下 rails 版本編號</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rails -v</span></code></pre></td></tr></table></div></figure>
+
+
+<p>出現表示安裝完成了。終於弄完這篇文章了，明明裝的時候很快，弄成文章花了不少時間。</p>
+
+<h2>My Environment</h2>
+
+<ul>
+<li>OS:Win 10</li>
+</ul>
+
+
+<h2>Reference</h2>
+
+<ul>
+<li><a href="http://rubyinstaller.org/downloads/">RubyInstaller</a></li>
+<li><a href="https://www.ruby-lang.org/zh_tw/" title="Ruby Programming Language">Ruby Programming Language</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[First() 跟 FirstOrDefault()]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/04/first-with-the-firstordefault/"/>
+    <updated>2015-11-04T14:46:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/04/first-with-the-firstordefault</id>
+    <content type="html"><![CDATA[<h2>緣起</h2>
+
+<p>前陣子有個朋友跟我詢問一段 <a href="https://msdn.microsoft.com/zh-tw/library/bb397897.aspx" title="LINQ">LINQ</a> 的 code，說輸出不是他想要的值，不過當時我去倒杯水，想說回來再看的時候，他自己搞定了 XD，雖然已經解決了，但是既然都抽出時間了，就還是看一下，看到他使用了 First() 去解決，就問他怎麼不使用 FirstOrDefault ，不過那段 code 還是有些需要調整的地方就是了，以下就先來看看這個問題吧(我憑印象中的 code ，可能跟當時的有點落差)。</p>
+
+<h2>問題</h2>
+
+<figure class='code'><figcaption><span>C#</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;zipCode&quot;</span><span class="p">,</span><span class="s">&quot;郵遞區號&quot;</span><span class="p">},</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">string</span> <span class="n">str</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span> <span class="s">&quot;縣市&quot;</span><span class="p">).</span><span class="n">Select</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Key</span><span class="p">).</span><span class="n">ToString</span><span class="p">();</span>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面的程式碼會輸出以下的結果，但是其目的是想要輸出為 city</p>
+
+<figure class='code'><figcaption><span>C#</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">System</span><span class="p">.</span><span class="n">Linq</span><span class="p">.</span><span class="n">Enumerable</span><span class="p">+</span><span class="n">WhereSelectEnumerableIterator</span><span class="err">`</span><span class="m">2</span><span class="p">[</span><span class="n">System</span><span class="p">.</span><span class="n">Collections</span><span class="p">.</span><span class="n">Generic</span><span class="p">.</span><span class="n">KeyValuePair</span><span class="err">`</span><span class="m">2</span><span class="p">[</span><span class="n">System</span><span class="p">.</span><span class="n">String</span><span class="p">,</span><span class="n">System</span><span class="p">.</span><span class="n">String</span><span class="p">],</span><span class="n">System</span><span class="p">.</span><span class="n">String</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>為什麼會輸出這個，也很簡單，LINQ 的 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb548891(v=vs.100).aspx" title="MSDN - Enumerable.Select">Select</a> 回傳的型別是<code>IEnumerable&lt;TResult&gt;</code>也就是說是個物件，因此在物件後面直接使用 <a href="https://msdn.microsoft.com/zh-tw/library/system.object.tostring(v=vs.110).aspx" title="Object.ToString">ToString()</a> 就是直接輸出該物件的型別狀態</p>
+
+<h2>解決方法</h2>
+
+<p>既然知道了原因，那就有了解決方法，加上個<code>First()</code>或是<code>FirstOrDefault()</code>就可以了，改正如下</p>
+
+<figure class='code'><figcaption><span>C#</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;zipCode&quot;</span><span class="p">,</span><span class="s">&quot;郵遞區號&quot;</span><span class="p">},</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">string</span> <span class="n">str</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span> <span class="s">&quot;縣市&quot;</span><span class="p">).</span><span class="n">Select</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Key</span><span class="p">).</span><span class="n">First</span><span class="p">().</span><span class="n">ToString</span><span class="p">();</span>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2><a href="https://msdn.microsoft.com/en-us/library/vstudio/bb535050(v=vs.100).aspx" title="Enumerable.First">First</a> 與 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb340482(v=vs.100).aspx" title="Enumerable.FirstOrDefault">FirstOrDefault</a></h2>
+
+<p>就是看到朋友是使用<code>First</code>解決，才想把<code>First</code>跟<code>FirstOrDefault</code>一起列出來，不過上面的 code 是示意而已，不要太介意為啥這樣寫。現在先來說明，<a href="https://msdn.microsoft.com/en-us/library/vstudio/bb535050(v=vs.100).aspx" title="Enumerable.First">First</a> 跟 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb340482(v=vs.100).aspx" title="Enumerable.FirstOrDefault">FirstOrDefault</a> 差別在哪裡，其實兩者相差的點很簡單，使用<code>Enumerable.First</code>找不到資料的時候會出錯，而使用<code>Enumerable.FirstOrDefault</code> 找不到資料會給予預設值，使用上述的例子來示範一下</p>
+
+<figure class='code'><figcaption><span>Enumerable.First(會發生錯誤)</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">queryF</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">First</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">queryF</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vdzM5VWJwWWNzbGM" alt="Enumerable.First Result" /></p>
+
+<figure class='code'><figcaption><span>Enumerable.FirstOrDefault</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>    
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">query</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">FirstOrDefault</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span><span class="p">(</span><span class="n">query</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="k">default</span><span class="p">(</span><span class="n">KeyValuePair</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="kt">string</span><span class="p">&gt;))){</span>
+</span><span class='line'>  <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">query</span><span class="p">.</span><span class="n">Key</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vMWEzbFJFZl9CczQ" alt="Enumerable.First Result" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Windows 刪除資料路徑太長的檔案]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/03/windows-deleted-files-data-path-is-too-long/"/>
+    <updated>2015-11-03T06:04:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/03/windows-deleted-files-data-path-is-too-long</id>
+    <content type="html"><![CDATA[<p>在 windows 系統中用 npm 裝了一些 generator 後，有些路徑長得不像話，很容易就爆了，砍都砍不掉，就像下圖。
+<img src="https://googledrive.com/host/0B24tdidnsV1veC1vNUc4NUhheWM" alt="錯誤畫面" />
+當時又不想靠 7-zip 來刪除檔案，就想找有沒有便利的工具直接下指令刪除了，剛好看到這工具挺方便的</p>
+
+<h2>問題環境</h2>
+
+<blockquote><p>npm version:2.11
+OS: win 10</p></blockquote>
+
+<h2>問題原因</h2>
+
+<p>一方面是 npm 的設計，另一方面是 windows 環境下的問題，windows 下路徑檔名有長度限制。
+對於 npm 在 windows 環境下的設定與路徑說明，可以參考<a href="http://blog.miniasp.com/post/2015/09/02/Change-npm-default-global-installation-directory-for-nodejs-modules-in-Windows.aspx" title="保哥 如何在 Windows 平台變更 Node.js / npm 全域模組的預設安裝路徑">保哥的文章</a>；不是 npm 產生這問題的，也可以考慮以下解決方式，話說以前好像玩遊戲的時候搞出這種問題 >&lt;。</p>
+
+<h2>解決方式</h2>
+
+<p>遇到這種情形，解決方式有幾點
+* 改檔名，把路徑改到符合長度限制
+* 第三方工具</p>
+
+<p>第一種方式的土法煉鋼，除了真的想嘗試手指運動的人，我想應該不會有人想要這樣做，除非路徑長度剛好超出限制一點點。
+工具的部分介紹大家兩種：
+* <a href="http://www.7-zip.org/" title="7-zip">7-zip</a>，這是圖形化介面，簡單說就是滑鼠操作一下，今天就不說這個工具，想知道怎麼操作的可以參考一下 <a href="http://demo.tc/post/811" title="demoshop - Windows 系統中資料路徑太長無法刪除的解決辦法">demo 哥的文章</a>
+* <a href="https://www.npmjs.com/package/rimraf" title="rimraf">rimraf</a>，以下介紹這工具</p>
+
+<h3>第三方工具 <a href="https://www.npmjs.com/package/rimraf" title="rimraf">rimraf</a></h3>
+
+<p>這工具是 npm package ，可以直接在 cmd 直接執行，符合我的需求。順便說一下，我使用 npm 預設路徑，套用 Yeoman 的 Hottowel generator，擷取一小部分其檔案結構來看，應該不會有人想要一一刪除檔案
+<img src="https://googledrive.com/host/0B24tdidnsV1vNURfVm1PczF5U2s" alt="tree view" /></p>
+
+<h3>操作方式</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rimraf(f, callback)</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vbUVhSmVtU0FlM0E" alt="cmder view" /></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Application Automatically Disabled]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/02/application-automatically-disabled/"/>
+    <updated>2015-11-02T07:26:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/02/application-automatically-disabled</id>
+    <content type="html"><![CDATA[<p>以下使用的 Server</p>
+
+<blockquote><p>Server：Win2008 R2</p></blockquote>
+
+<p>記錄一下 Server 的一些小事件，主要是因為早上突然發生了這個畫面
+<img src="https://googledrive.com/host/0B24tdidnsV1vb1Mya1AyZG1lcEE" alt="錯誤畫面" />
+一看就很明顯 Service 停止了，進去 Server 然後到 IIS 將 Application Pool Start 就好了；但是到底是如何自動關閉的，查看 <strong>Event Viewer</strong> 發現 IIS 有設定機制自動關閉的，訊息如下。
+<img src="https://googledrive.com/host/0B24tdidnsV1vZjVudzhfcGs3MUU" alt="Event Viewer" /></p>
+
+<h2>Rapid-Fail Protection</h2>
+
+<p>好吧，得知了有自動關閉機制，應該可以調整設定吧，繼續到 IIS -> Application Pools 如下圖
+<img src="https://googledrive.com/host/0B24tdidnsV1vQ241cHAzd0NVazQ" alt="Application Pools" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vNm5wRU5wTXRFY2c" alt="Advanced Settings" /></p>
+
+<p>設定的意義非常簡單，就是幾分鐘內發生幾次錯誤就自動關閉，想要詳細了解的可以參閱一下 <a href="https://msdn.microsoft.com/zh-tw/library/cc779875(v=ws.10).aspx" title="設定 IIS 6.0 中的快速失敗保護">MSDN</a> ；至於怎麼樣的警告會進行自動關閉呢？就是 IIS 發生錯誤，例如：IIS 發送 EMail 發送失敗&hellip;等等。此次就是因為信件發送的問題導致。</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Google App for Education 申請]]></title>
+    <link href="http://shunnien.github.io/blog/2015/10/29/google-for-education/"/>
+    <updated>2015-10-29T03:39:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/10/29/google-for-education</id>
+    <content type="html"><![CDATA[<h3>緣由</h3>
+
+<p>因為基金會帳號資料凌亂，所以趁此機會統一申請，管理也較為方便</p>
+
+<h3>Googel App</h3>
+
+<p>提供許多服務，不過此處主要是說申請 Google Apps for Work ，這些申請可以分為
+1. <a href="https://www.google.com.tw/intx/zh-TW/work/apps/business/" title="Google Apps for Work">Google Apps for Work</a>
+2. <a href="https://www.google.com.tw/intl/zh-TW/edu/products/productivity-tools/" title="Google Apps for Education">Google Apps for Education</a></p>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vRFJKd2wzWkY5SGs" alt="相關解決方案" /></p>
+
+<h3>Education 申請流程－先行確認資格</h3>
+
+<p>要申請 education 有幾個資格，必須符合
+* 經由一般公認的認證單位評定合格的幼稚園到高中、高等教育機構或非營利組織
+* 獲得認證的非營利組織 (必須位於目前支援的 15 個國家/地區)。</p>
+
+<p>詳細的資料可以參考<a href="https://support.google.com/a/answer/139019?hl=zh-Hant" title="Google Apps for Education：常見問題">Google Education 常見問題</a>，在常見問題的【<em>哪些機構符合 Google Apps for Education 申請資格?</em>】可以觀看詳細資訊，由於我要申請的是非營利組織(基金會之類的)，所以可以看一下<a href="https://support.google.com/nonprofits/answer/3215869" title="獲得認證的非營利組織">獲得認證的非營利組織</a>，接著找尋<strong>台灣機構規範要點</strong>，如下所示</p>
+
+<blockquote><ul>
+<li>機構必須已向 TechSoup Global 的區域專責單位 <a href="https://techsoup-taiwan.org.tw/" title="TechSoup Taiwan">TechSoup Taiwan</a> 註冊。</li>
+<li>只有以下類型的機構符合申請資格：
+
+<ul>
+<li>以公益為目的且向相關政府機構註冊的協會和基金會
+
+<ul>
+<li>經中央政府審查及許可的全國機構</li>
+<li>由區域縣市政府相關局處審查及許可的地方機構</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+
+<h3>註冊 TechSoup Taiwan</h3>
+
+<p>進入 <a href="https://techsoup-taiwan.org.tw/" title="TechSoup Taiwan">TechSoup Taiwan</a> 後，就來準備<a href="https://techsoup-taiwan.org.tw/user/register" title="TechSoup 註冊">註冊</a>了。首先填寫帳號資訊，就填想要使用的名稱與 mail 吧。
+<img src="https://googledrive.com/host/0B24tdidnsV1venFEN1dXcE1kRzg" alt="帳號資訊" />
+接著選擇主要服務內容，直接進行點選就可以了。
+<img src="https://googledrive.com/host/0B24tdidnsV1vb3hHWXJ2LTg2MVk" alt="服務內容" />
+然後 <strong>Organization registration</strong> 就是你所屬機構的資訊了，這邊都要使用英文輸入，英文地址的部分可以參考<a href="http://www.post.gov.tw/post/internet/SearchZone/index.jsp?ID=130112" title="郵局中文地址英譯">郵局中文地址英譯</a>
+<img src="https://googledrive.com/host/0B24tdidnsV1vc3dDXzRpbzRQYTA" alt="Organization registration" />
+Organization registered identifiers 都是要輸入登記書資訊，字號的翻譯可以參考<a href="http://www.iq-t.com/SYSCOM/pinyin1.asp" title="IQ Technology Inc. 中文拼音查詢及譯音轉換系統">IQ Technology Inc.</a>
+<img src="https://googledrive.com/host/0B24tdidnsV1vYXhDOTNpMm1yS3c" alt="Organization registered identifiers" />
+除了服務宗旨一定要輸入外，那些資訊就隨意啦
+<img src="https://googledrive.com/host/0B24tdidnsV1vbmZwU1pvMm5hTFU" alt="Organization Information" />
+最後就是填上聯絡資訊了，這邊都有提示輸入英文
+<img src="https://googledrive.com/host/0B24tdidnsV1vLVRvZG1ULTBPX1k" alt="Organization Contact" />
+然後註冊後會收到來信通知
+<img src="https://googledrive.com/host/0B24tdidnsV1vbUQ5T0pJQzdIeEE" alt="通知信內容" />
+這樣就註冊完成了。</p>
+
+<h3>註冊 Google App for Education</h3>
+
+<p>進入 <a href="https://www.google.com.tw/intl/zh-TW/edu/products/productivity-tools/" title="Google Apps for Education">Google for Education</a> 頁面，然後按照以下圖片快速進行下一步，這些都是提醒一些資訊而已
+<img src="https://googledrive.com/host/0B24tdidnsV1vQ0swQjhGUnZZM0E" alt="edu step1" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vRmtxeDg0RW9KZjA" alt="edu step2" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vaTRMQUdEUTVLNzg" alt="edu step3" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vUFowZUZLb3JNQ1U" alt="edu step4" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vS3dYcW01b0Y3SWM" alt="edu step5" /></p>
+
+<p>到這邊才是開始要輸入資訊，與確認的開始；發生什麼事!!!沒有我要的選項，先隨便選擇一個吧，後面會說明怎麼加入。
+<img src="https://googledrive.com/host/0B24tdidnsV1veEtleEFmSGQ1VUE" alt="edu input text" />
+輸入你的網域，等下要去進行確認
+<img src="https://googledrive.com/host/0B24tdidnsV1vd05sSWs1V3ptRTQ" alt="edu input domain" />
+最後進行申請
+<img src="https://googledrive.com/host/0B24tdidnsV1va3ZUeVdMSFlHTEE" alt="edu finally" /></p>
+
+<h3>加入非營利計畫</h3>
+
+<p>完成上述申請後，但是你還是只有 30 天試用期間，需要申請加入 <a href="https://www.google.com.tw/nonprofits/join/" title="Google 非營利服務申請">Gooogle 非營利計畫</a>，這就用到了我們開始申請的 <a href="https://techsoup-taiwan.org.tw/user/register" title="TechSoup 註冊">TechSoup</a>，首先登入 <a href="https://techsoup-taiwan.org.tw/" title="TechSoup Taiwan">TechSoup</a> 取得認證代碼
+<img src="https://googledrive.com/host/0B24tdidnsV1vd0V3MFRjU25Gc2c" alt="TechSoup 認證碼" />
+接著<a href="https://www.google.com.tw/nonprofits/join/" title="Google 非營利服務申請">到此連結</a>輸入剛剛的認證碼
+<img src="https://googledrive.com/host/0B24tdidnsV1vaXBDT2dBQnFjZlk" alt="Google 非營利版申請 Step1" />
+勾選一些條款，確認這些規定等等。
+<img src="https://googledrive.com/host/0B24tdidnsV1vaDRTX3lBWmVUNzg" alt="Google 非營利版申請 Step2" />
+填入申請資訊
+<img src="https://googledrive.com/host/0B24tdidnsV1vaWdaNl9FMGtXRzQ" alt="Google 非營利版申請 Step3" />
+這樣就算加入完成了，接下來就要進行 Google Apps for Education 的方案升級，現在你的方案應該都是 30 天試用版，要升級成為免費版本，由[Google 非營利服務]進入，還沒登入的話進行登入，登入後就可以看到以下畫面，點選立即申請
+<img src="https://googledrive.com/host/0B24tdidnsV1vUDVWck9XelBaUDg" alt="Google 非營利版產品申請" />
+接著會看到你可以申請的產品，這邊我主要申請 Google Apps 非營利版
+<img src="https://googledrive.com/host/0B24tdidnsV1vRGh0OFhDRm01ZTg" alt="非營利版產品選擇" />
+最後勾選確認資料
+<img src="https://googledrive.com/host/0B24tdidnsV1vRHZvblNRTGpNN0U" alt="確認選擇" />
+接著 Google 會發送信件給你，如果你有設定 MX Record 的話，可以直接進 Gmail 信箱收信，會收到這封信件
+最後就是等待通知就可以了。
+<img src="https://googledrive.com/host/0B24tdidnsV1vekVmelU0eThHSXM" alt="升級通知信" /></p>
+
+<h2>感想</h2>
+
+<p>這次主要在網域的驗證一直有許多問題，畢竟我沒有權限去那邊進行設定，所以一直莫名其妙一堆問題，後來發現不知道誰有設定權限給我，自訂按照 Google 上的 <a href="https://support.google.com/a/answer/6149697?hl=en" title="AWS Setting">AWS</a> 說明，就挺順利的，這次到這邊結束了，感覺挺繁瑣的申請步驟～～～</p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[CryptoJs Sample]]></title>
+    <link href="http://shunnien.github.io/blog/2015/10/26/cryptojs-sample/"/>
+    <updated>2015-10-26T10:57:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/10/26/cryptojs-sample</id>
+    <content type="html"><![CDATA[<h2><a href="https://code.google.com/p/crypto-js/" title="crypto-js">Crypto-JS</a></h2>
+
+<p>我主要採用 code.google 上的資料說明為主，此 Library 支援
+* Hashers
+    * MD5
+    * SHA-1
+    * SHA-2
+    * SHA-3
+    * RIPEMD-160
+  * HMAC
+      * HMAC-MD5
+        * HMAC-SHA1
+        * HMAC-SHA256
+        * HMAC-SHA512
+    * PBKDF2
+* Ciphers
+    * AES
+  * DES, Triple DES
+  * Rabbit
+  * RC4, RC4Drop</p>
+
+<p>除了上述支持的算法之外，尚有許多功能，此篇著重在 <a href="https://code.google.com/p/crypto-js/" title="crypto-js">CryptoJS</a> 中的 <a href="http://www.codedata.com.tw/social-coding/aes/" title="AES 對稱式加解密法 - CodeData">AES</a> 加解密部分，順便弄了簡單的加解密 sample 看之後有時間來慢慢將他把功能完善；好了，閒話不多說，還是趕快把此次範例中的注意事項與 code 展示吧。</p>
+
+<p>以下為官方所展示的的 AES 範例</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"&gt;&lt;/script&gt;
+</span><span class='line'>&lt;script&gt;
+</span><span class='line'>    var encrypted = CryptoJS.AES.encrypt("Message", "Secret Passphrase");
+</span><span class='line'>
+</span><span class='line'>    var decrypted = CryptoJS.AES.decrypt(encrypted, "Secret Passphrase");
+</span><span class='line'>&lt;/script&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>CryptoJS 在 The Advanced Encryption Standard (AES) 支援了
+* AES-128
+* AES-192
+* AES-256</p>
+
+<p>另外，像這個官方範例其實預設了很多預設值，假如沒有指定 key 長度的話，預設是使用 256-bit。</p>
+
+<iframe width="100%" height="300" src="//jsfiddle.net/wiamyu/7t32w98f/13/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+
+<p>比較需要注意一下解碼，解碼出來的資料預設是經過編碼轉換過的，所以你要得到你原來的資料，要在編碼轉換一次。</p>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vRVE2Z3FCZU82UXc" alt="CryptoJS object " /></p>
+
+<p>最後提供二個線上加解密資源，有一個其實是 Demo
+<a href="http://tool.oschina.net/encrypt">在线工具 - 开源中国</a>
+<a href="http://cryptojs.altervista.org/api/demo.html">LJavaScript Cryptography</a>
+<a href="https://github.com/brix/crypto-js">crypto-js 的 Github</a></p>
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Sql Server 取得所有欄位定義]]></title>
+    <link href="http://shunnien.github.io/blog/2015/10/22/sql-server-access-to-all-field-definitions/"/>
+    <updated>2015-10-22T04:11:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/10/22/sql-server-access-to-all-field-definitions</id>
+    <content type="html"><![CDATA[<p>把一些以前整理的東西，紀錄一下</p>
+
+<p>此部分最好在 Sql Server 2005 以上使用， Sql Server 2000 就沒使用過</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SELECT
+</span><span class='line'>CASE  a.TABLE_TYPE
+</span><span class='line'>WHEN  'BASE TABLE'  THEN '資料表'
+</span><span class='line'>WHEN 'VIEW'  THEN '檢視表'
+</span><span class='line'>END as 表格類型 ,
+</span><span class='line'>    a.TABLE_NAME                as 表格名稱,
+</span><span class='line'>    b.COLUMN_NAME               as 欄位名稱,
+</span><span class='line'>    b.DATA_TYPE                 as 資料型別,
+</span><span class='line'>    b.CHARACTER_MAXIMUM_LENGTH  as 最大長度,
+</span><span class='line'>    b.COLUMN_DEFAULT            as 預設值,
+</span><span class='line'>    b.IS_NULLABLE               as 允許空值,
+</span><span class='line'>    (
+</span><span class='line'>        SELECT
+</span><span class='line'>            value
+</span><span class='line'>        FROM
+</span><span class='line'>            fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 
+</span><span class='line'>                                     a.TABLE_NAME, 'column', default)
+</span><span class='line'>        WHERE
+</span><span class='line'>            name='MS_Description' 
+</span><span class='line'>            and objtype='COLUMN' 
+</span><span class='line'>            and objname Collate Chinese_Taiwan_Stroke_CI_AS=b.COLUMN_NAME
+</span><span class='line'>    ) as 欄位備註
+</span><span class='line'>FROM
+</span><span class='line'>    INFORMATION_SCHEMA.TABLES  a
+</span><span class='line'>    LEFT JOIN INFORMATION_SCHEMA.COLUMNS b ON (a.TABLE_NAME=b.TABLE_NAME)
+</span><span class='line'>--WHERE
+</span><span class='line'>--    TABLE_TYPE='VIEW'
+</span><span class='line'>--    TABLE_TYPE='BASE TABLE'
+</span><span class='line'>ORDER BY
+</span><span class='line'>   a.TABLE_TYPE, a.TABLE_NAME, ordinal_position</span></code></pre></td></tr></table></div></figure>
+
+]]></content>
+  </entry>
+  
+</feed>

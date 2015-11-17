@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: C# | ShunNien's Blog]]></title>
+  <link href="http://shunnien.github.io/blog/categories/c-number/atom.xml" rel="self"/>
+  <link href="http://shunnien.github.io/"/>
+  <updated>2015-11-17T16:11:30+08:00</updated>
+  <id>http://shunnien.github.io/</id>
+  <author>
+    <name><![CDATA[ShunNien Yu(Allen Yu)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[First() 跟 FirstOrDefault()]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/04/first-with-the-firstordefault/"/>
+    <updated>2015-11-04T14:46:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/04/first-with-the-firstordefault</id>
+    <content type="html"><![CDATA[<h2>緣起</h2>
+
+<p>前陣子有個朋友跟我詢問一段 <a href="https://msdn.microsoft.com/zh-tw/library/bb397897.aspx" title="LINQ">LINQ</a> 的 code，說輸出不是他想要的值，不過當時我去倒杯水，想說回來再看的時候，他自己搞定了 XD，雖然已經解決了，但是既然都抽出時間了，就還是看一下，看到他使用了 First() 去解決，就問他怎麼不使用 FirstOrDefault ，不過那段 code 還是有些需要調整的地方就是了，以下就先來看看這個問題吧(我憑印象中的 code ，可能跟當時的有點落差)。</p>
+
+<h2>問題</h2>
+
+<pre><code class="C# C#">Dictionary&lt;string, string&gt; Address = new Dictionary&lt;string, string&gt;(){
+    {"zipCode","郵遞區號"},
+    {"city","縣市"}
+};
+string str = Address.Where(p =&gt; p.Value == "縣市").Select(x =&gt; x.Key).ToString();
+Console.WriteLine(str);
+</code></pre>
+
+<p>上面的程式碼會輸出以下的結果，但是其目的是想要輸出為 city</p>
+
+<pre><code>System.Linq.Enumerable+WhereSelectEnumerableIterator`2[System.Collections.Generic.KeyValuePair`2[System.String,System.String],System.String] 
+</code></pre>
+
+<p>為什麼會輸出這個，也很簡單，LINQ 的 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb548891(v=vs.100).aspx" title="MSDN - Enumerable.Select">Select</a> 回傳的型別是<code>IEnumerable&lt;TResult&gt;</code>也就是說是個物件，因此在物件後面直接使用 <a href="https://msdn.microsoft.com/zh-tw/library/system.object.tostring(v=vs.110).aspx" title="Object.ToString">ToString()</a> 就是直接輸出該物件的型別狀態</p>
+
+<h2>解決方法</h2>
+
+<p>既然知道了原因，那就有了解決方法，加上個<code>First()</code>或是<code>FirstOrDefault()</code>就可以了，改正如下
+<code>
+Dictionary&lt;string, string&gt; Address = new Dictionary&lt;string, string&gt;(){
+    {"zipCode","郵遞區號"},
+    {"city","縣市"}
+};
+string str = Address.Where(p =&gt; p.Value == "縣市").Select(x =&gt; x.Key).First().ToString();
+Console.WriteLine(str);
+</code></p>
+
+<h2><a href="https://msdn.microsoft.com/en-us/library/vstudio/bb535050(v=vs.100).aspx" title="Enumerable.First">First</a> 與 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb340482(v=vs.100).aspx" title="Enumerable.FirstOrDefault">FirstOrDefault</a></h2>
+
+<p>就是看到朋友是使用<code>First</code>解決，才想把<code>First</code>跟<code>FirstOrDefault</code>一起列出來，不過上面的 code 是示意而已，不要太介意為啥這樣寫。現在先來說明，<a href="https://msdn.microsoft.com/en-us/library/vstudio/bb535050(v=vs.100).aspx" title="Enumerable.First">First</a> 跟 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb340482(v=vs.100).aspx" title="Enumerable.FirstOrDefault">FirstOrDefault</a> 差別在哪裡，其實兩者相差的點很簡單，使用<code>Enumerable.First</code>找不到資料的時候會出錯，而使用<code>Enumerable.FirstOrDefault</code> 找不到資料會給予預設值，使用上述的例子來示範一下
+<code>c# Enumerable.First(會發生錯誤)
+Dictionary&lt;string, string&gt; Address = new Dictionary&lt;string, string&gt;(){
+    {"city","縣市"}
+};
+var queryF = Address.First(p =&gt; p.Value =="2");
+Console.WriteLine(queryF);
+</code></p>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vdzM5VWJwWWNzbGM" alt="Enumerable.First Result" /></p>
+
+<pre><code class="C# Enumerable.FirstOrDefault">Dictionary&lt;string, string&gt; Address = new Dictionary&lt;string, string&gt;(){  
+    {"city","縣市"}
+};
+var query = Address.FirstOrDefault(p =&gt; p.Value =="2");
+if(query.Equals(default(KeyValuePair&lt;string,string&gt;))){
+    Console.WriteLine(query.Key);
+}
+</code></pre>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vMWEzbFJFZl9CczQ" alt="Enumerable.First Result" /></p>
+]]></content>
+  </entry>
+  
+</feed>

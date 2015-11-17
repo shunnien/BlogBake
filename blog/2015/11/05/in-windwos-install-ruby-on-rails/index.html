@@ -1,0 +1,379 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>在 Windows 安裝 Ruby on Rails - ShunNien's Blog</title>
+  <meta name="author" content="ShunNien Yu(Allen Yu)">
+
+  
+  <meta name="description" content="緣起 在 Windows 平台上很久了，今年初為了裝一些套件，就安裝了 Ruby，結果今年都快過完了都沒去玩過，只是為了那些套件安裝順利就裝了 ruby，感覺很浪費呀，所以再裝 Rails 進來玩玩，順手記錄一下安裝的過程，為了記錄，我又重新安裝一次 ruby XD。 下載安裝檔案 Ruby &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shunnien.github.io/blog/2015/11/05/in-windwos-install-ruby-on-rails/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="ShunNien's Blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-62183976-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ShunNien's Blog</a></h1>
+  
+    <h2>不積跬步，無以致千里；不積小流，無以成江海。</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="shunnien.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/categories/">Categories</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">在 Windows 安裝 Ruby on Rails</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-11-05T03:10:00+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:10 am</span></time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://shunnien.github.io">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>緣起</h2>
+
+<p>在 Windows 平台上很久了，今年初為了裝一些套件，就安裝了 Ruby，結果今年都快過完了都沒去玩過，只是為了那些套件安裝順利就裝了 ruby，感覺很浪費呀，所以再裝 Rails 進來玩玩，順手記錄一下安裝的過程，為了記錄，我又重新安裝一次 ruby XD。</p>
+
+<h2>下載安裝檔案 <a href="https://www.ruby-lang.org/zh_tw/" title="Ruby Programming Language">Ruby</a></h2>
+
+<p>首先到<a href="http://rubyinstaller.org/downloads/">RubyInstaller</a>下載安裝檔案，請依照下圖指示進行。
+<img src="https://googledrive.com/host/0B24tdidnsV1vLU4yOXk5RzFGbkk" alt="RubyInstaller Index" />
+到這頁面選擇符合您自己系統的版本，以下是我的安裝版本
+<img src="https://googledrive.com/host/0B24tdidnsV1vYlhqZjJoaXNUcDQ" alt="RubyInstaller Select Version" />
+然後順便下載 DevKit，一樣選擇適合自己的版本，我是選擇 <strong>For use with Ruby 2.0 and above (x64 - 64bits only)</strong>這版本
+<img src="https://googledrive.com/host/0B24tdidnsV1vN2VCZk5ITkI1OEU" alt="Ruby DevKit" /></p>
+
+<h2>安裝 RubyInstaller</h2>
+
+<p>執行剛剛下載的 <strong>RubyInstaller</strong>
+<img src="https://googledrive.com/host/0B24tdidnsV1vd0ZMaGtCa2lUT2c" alt="RubyInstaller Install" />
+勾選接受這<strong> License</strong>
+<img src="https://googledrive.com/host/0B24tdidnsV1vWUVXNUFFbVdOd1E" alt="License" />
+選擇您想要安裝的路徑並勾選 <strong>Add Ruby executables to your PATH</strong> 這個選項，這樣安裝程式會自動設定環境變數，等下就可以直接在指令列上執行。
+<img src="https://googledrive.com/host/0B24tdidnsV1vWUVXNUFFbVdOd1E" alt="Destination" />
+然後稍微等個幾秒
+<img src="https://googledrive.com/host/0B24tdidnsV1vR0dxTFpjSTdOMVk" alt="Installing" />
+就可以看到安裝完成畫面
+<img src="https://googledrive.com/host/0B24tdidnsV1vcW40VFJXelBaWVk" alt="Completing" />
+接著我們開啟命令提示字元，或是<code>Win + R</code>輸入<code>cmd</code>，我以下畫面是使用 <a href="http://blog.miniasp.com/post/2015/09/28/Useful-tool-Cmder.aspx">cmder</a>，畫面看起來不太一樣，但是功能是相同的；命令提示字元開啟後，鍵入<code>ruby -v</code>查看一下 ruby 安裝的版本，應該會是如下圖顯示。
+<img src="https://googledrive.com/host/0B24tdidnsV1vUUZnTVNoN1lGME0" alt="Version Check Success" />
+如果出現[<em>不是內部或外部命令、可執行的程式或批次檔。</em>]這訊息，如下圖所示。
+<img src="https://googledrive.com/host/0B24tdidnsV1vd19vMmZSRm5yTlE" alt="Version Check Failure" />
+可能是剛剛沒有勾選 <strong>Add Ruby executables to your PATH</strong>造成，您可能必須手動設定環境變數，需要進入控制台->系統->進階系統設定->進階->環境變數->系統變數->找尋 <strong>Path</strong> 路徑->編輯，把您的 ruby 安裝路徑增加進去
+<img src="https://googledrive.com/host/0B24tdidnsV1vd1psdVRFajlZME0" alt="Set Path" /></p>
+
+<h2>安裝 DevKit</h2>
+
+<p>執行 DevKit-mingw64-64-4.7.2-20130224-1432-sfx.exe，這檔名超長，選擇您想放置的位置，建議放到<code>C:\RubyDevKit</code>
+<img src="https://googledrive.com/host/0B24tdidnsV1vdERtRi1jUkdtLTA" alt="Set DevKit Path" /></p>
+
+<p>如果都是按照上述建議的話，到<code>C:\RubyDevKit</code>資料夾下(您所解壓縮的位置下)<code>Ctrl + shift + mouse right click</code>選擇開啟命令視窗</p>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vVDBKY1pEa29pVkk" alt="手動設定" /></p>
+
+<p>執行<code>ruby dk.rb init</code>，這指令會產生<strong>config.yml</strong>這檔案，並且會偵測您 ruby 安裝的路徑，直接寫入到 config.yml 檔案中
+<img src="https://googledrive.com/host/0B24tdidnsV1vU2drbjUzZzUyRlU" alt="執行 ruby dk.rb init" /></p>
+
+<p>假如沒有偵測到您的安裝路徑，請手動更改 config.yml 這檔案，用記事本就可以開啟這檔案，按照下圖修改，請修改為您所安裝的路徑，注意路徑語法是<code>- C:/yourRubyPath</code>前面有個小破折號
+<img src="https://googledrive.com/host/0B24tdidnsV1vQXd0aTdvU0RwX0k" alt="設定 Ruby路徑" /></p>
+
+<p>然後執行以下命令，它會更動您 ruby 安裝路徑下的檔案或產生檔案</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ruby dk.rb install</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vVkVHQ0VFT0dUcXM" alt="DevKit Install" /></p>
+
+<h2>安裝 Rails</h2>
+
+<p>接下來使用<code>gem</code>來安裝，所以下指令就可以安裝完成了，直接下指令安裝 rails</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install rails --no-ri --no-rdoc</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安裝完成後，測試一下，看一下 rails 版本編號</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rails -v</span></code></pre></td></tr></table></div></figure>
+
+
+<p>出現表示安裝完成了。終於弄完這篇文章了，明明裝的時候很快，弄成文章花了不少時間。</p>
+
+<h2>My Environment</h2>
+
+<ul>
+<li>OS:Win 10</li>
+</ul>
+
+
+<h2>Reference</h2>
+
+<ul>
+<li><a href="http://rubyinstaller.org/downloads/">RubyInstaller</a></li>
+<li><a href="https://www.ruby-lang.org/zh_tw/" title="Ruby Programming Language">Ruby Programming Language</a></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">ShunNien Yu(Allen Yu)</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-11-05T03:10:00+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:10 am</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/rubyonrails/'>rubyonrails</a>, <a class='category' href='/blog/categories/windows10/'>windows10</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://shunnien.github.io/blog/2015/11/05/in-windwos-install-ruby-on-rails/" data-via="" data-counturl="http://shunnien.github.io/blog/2015/11/05/in-windwos-install-ruby-on-rails/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/11/04/first-with-the-firstordefault/" title="Previous Post: First() 跟 FirstOrDefault()">&laquo; First() 跟 FirstOrDefault()</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/11/05/octopress-and-github-pages-move-blog-to-github/" title="Next Post: Octopress 加上 Github Pages 移動部落格到 Github">Octopress 加上 Github Pages 移動部落格到 Github &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/11/13/the-viewbag-doesnt-exist-in-the-current-context/">Visual Studio 2015 the ViewBag Doesn't Exist in the Current Context</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/11/12/octopress-jia-ru-category-fen-lei/">Octopress 加入 Category(分類)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/11/11/litopress-geng-huan-license-footer/">Octopress 更換 License(footer)</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Top Categories</h1>
+    <ul id="top-category-list"><li><a href='/blog/categories/blog'>blog (4)</a></li><li><a href='/blog/categories/octopress'>octopress (4)</a></li><li><a href='/blog/categories/linq'>linq (1)</a></li><li><a href='/blog/categories/github'>github (1)</a></li><li><a href='/blog/categories/asp-dot-net-mvc-5'>asp.net mvc 5 (1)</a></li><li><a href='/blog/categories/windows10'>windows10 (1)</a></li></ul>
+</section><section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc-5' style='font-size: 115.0%'>asp.net mvc 5</a> <a href='/blog/categories/blog' style='font-size: 160.0%'>blog</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/github' style='font-size: 115.0%'>github</a> <a href='/blog/categories/google' style='font-size: 115.0%'>google</a> <a href='/blog/categories/iis7-dot-5' style='font-size: 115.0%'>iis7.5</a> <a href='/blog/categories/linq' style='font-size: 115.0%'>linq</a> <a href='/blog/categories/npm' style='font-size: 115.0%'>npm</a> <a href='/blog/categories/octopress' style='font-size: 160.0%'>octopress</a> <a href='/blog/categories/rubyonrails' style='font-size: 115.0%'>rubyonrails</a> <a href='/blog/categories/sql' style='font-size: 115.0%'>sql</a> <a href='/blog/categories/sqlserver' style='font-size: 115.0%'>sqlserver</a> <a href='/blog/categories/visual-studio-2015' style='font-size: 115.0%'>visual studio 2015</a> <a href='/blog/categories/windows10' style='font-size: 115.0%'>windows10</a> <a href='/blog/categories/windwos' style='font-size: 115.0%'>windwos</a> </span>
+</section><section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/asp-dot-net-mvc-5'>asp.net mvc 5 (1)</a></li><li><a href='/blog/categories/blog'>blog (4)</a></li><li><a href='/blog/categories/c-number'>c# (1)</a></li><li><a href='/blog/categories/github'>github (1)</a></li><li><a href='/blog/categories/google'>google (1)</a></li><li><a href='/blog/categories/iis7-dot-5'>iis7.5 (1)</a></li><li><a href='/blog/categories/linq'>linq (1)</a></li><li><a href='/blog/categories/npm'>npm (1)</a></li><li><a href='/blog/categories/octopress'>octopress (4)</a></li><li><a href='/blog/categories/rubyonrails'>rubyonrails (1)</a></li><li><a href='/blog/categories/sql'>sql (1)</a></li><li><a href='/blog/categories/sqlserver'>sqlserver (1)</a></li><li><a href='/blog/categories/visual-studio-2015'>visual studio 2015 (1)</a></li><li><a href='/blog/categories/windows10'>windows10 (1)</a></li><li><a href='/blog/categories/windwos'>windwos (1)</a></li></ul>
+</section>
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/shunnien">@shunnien</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'shunnien',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/113838943770679866520?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="創用 CC 授權條款" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>
+    <br />本著作由
+    <a xmlns:cc="http://creativecommons.org/ns#" href="shunnien.github.io" property="cc:attributionName" rel="cc:attributionURL">ShunNien Yu</a>製作，以<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">創用CC 姓名標示-非商業性 4.0 國際 授權條款</a>釋出。
+    <br />Copyright &copy; 2015 - ShunNien Yu(Allen Yu) -
+    <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shunniengithubblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shunnien.github.io/blog/2015/11/05/in-windwos-install-ruby-on-rails/';
+        var disqus_url = 'http://shunnien.github.io/blog/2015/11/05/in-windwos-install-ruby-on-rails/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

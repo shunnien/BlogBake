@@ -1,0 +1,761 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>ShunNien's Blog</title>
+  <meta name="author" content="ShunNien Yu(Allen Yu)">
+
+  
+  <meta name="description" content="緣起 前陣子有個朋友跟我詢問一段 LINQ 的 code，說輸出不是他想要的值，不過當時我去倒杯水，想說回來再看的時候，他自己搞定了 XD，雖然已經解決了，但是既然都抽出時間了，就還是看一下，看到他使用了 First() 去解決，就問他怎麼不使用 FirstOrDefault ，不過那段 code &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shunnien.github.io/posts/2/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="ShunNien's Blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-62183976-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ShunNien's Blog</a></h1>
+  
+    <h2>不積跬步，無以致千里；不積小流，無以成江海。</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="shunnien.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/categories/">Categories</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div class="blog-index">
+  
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/11/04/first-with-the-firstordefault/">First() 跟 FirstOrDefault()</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-11-04T14:46:00+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:46 pm</span></time>
+        
+           | <a href="/blog/2015/11/04/first-with-the-firstordefault/#disqus_thread"
+             data-disqus-identifier="http://shunnien.github.io/blog/2015/11/04/first-with-the-firstordefault/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>緣起</h2>
+
+<p>前陣子有個朋友跟我詢問一段 <a href="https://msdn.microsoft.com/zh-tw/library/bb397897.aspx" title="LINQ">LINQ</a> 的 code，說輸出不是他想要的值，不過當時我去倒杯水，想說回來再看的時候，他自己搞定了 XD，雖然已經解決了，但是既然都抽出時間了，就還是看一下，看到他使用了 First() 去解決，就問他怎麼不使用 FirstOrDefault ，不過那段 code 還是有些需要調整的地方就是了，以下就先來看看這個問題吧(我憑印象中的 code ，可能跟當時的有點落差)。</p>
+
+<h2>問題</h2>
+
+<figure class='code'><figcaption><span>C#</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;zipCode&quot;</span><span class="p">,</span><span class="s">&quot;郵遞區號&quot;</span><span class="p">},</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">string</span> <span class="n">str</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span> <span class="s">&quot;縣市&quot;</span><span class="p">).</span><span class="n">Select</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Key</span><span class="p">).</span><span class="n">ToString</span><span class="p">();</span>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面的程式碼會輸出以下的結果，但是其目的是想要輸出為 city</p>
+
+<figure class='code'><figcaption><span>C#</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">System</span><span class="p">.</span><span class="n">Linq</span><span class="p">.</span><span class="n">Enumerable</span><span class="p">+</span><span class="n">WhereSelectEnumerableIterator</span><span class="err">`</span><span class="m">2</span><span class="p">[</span><span class="n">System</span><span class="p">.</span><span class="n">Collections</span><span class="p">.</span><span class="n">Generic</span><span class="p">.</span><span class="n">KeyValuePair</span><span class="err">`</span><span class="m">2</span><span class="p">[</span><span class="n">System</span><span class="p">.</span><span class="n">String</span><span class="p">,</span><span class="n">System</span><span class="p">.</span><span class="n">String</span><span class="p">],</span><span class="n">System</span><span class="p">.</span><span class="n">String</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>為什麼會輸出這個，也很簡單，LINQ 的 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb548891(v=vs.100).aspx" title="MSDN - Enumerable.Select">Select</a> 回傳的型別是<code>IEnumerable&lt;TResult&gt;</code>也就是說是個物件，因此在物件後面直接使用 <a href="https://msdn.microsoft.com/zh-tw/library/system.object.tostring(v=vs.110).aspx" title="Object.ToString">ToString()</a> 就是直接輸出該物件的型別狀態</p>
+
+<h2>解決方法</h2>
+
+<p>既然知道了原因，那就有了解決方法，加上個<code>First()</code>或是<code>FirstOrDefault()</code>就可以了，改正如下</p>
+
+<figure class='code'><figcaption><span>C#</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;zipCode&quot;</span><span class="p">,</span><span class="s">&quot;郵遞區號&quot;</span><span class="p">},</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">string</span> <span class="n">str</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span> <span class="s">&quot;縣市&quot;</span><span class="p">).</span><span class="n">Select</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Key</span><span class="p">).</span><span class="n">First</span><span class="p">().</span><span class="n">ToString</span><span class="p">();</span>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2><a href="https://msdn.microsoft.com/en-us/library/vstudio/bb535050(v=vs.100).aspx" title="Enumerable.First">First</a> 與 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb340482(v=vs.100).aspx" title="Enumerable.FirstOrDefault">FirstOrDefault</a></h2>
+
+<p>就是看到朋友是使用<code>First</code>解決，才想把<code>First</code>跟<code>FirstOrDefault</code>一起列出來，不過上面的 code 是示意而已，不要太介意為啥這樣寫。現在先來說明，<a href="https://msdn.microsoft.com/en-us/library/vstudio/bb535050(v=vs.100).aspx" title="Enumerable.First">First</a> 跟 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb340482(v=vs.100).aspx" title="Enumerable.FirstOrDefault">FirstOrDefault</a> 差別在哪裡，其實兩者相差的點很簡單，使用<code>Enumerable.First</code>找不到資料的時候會出錯，而使用<code>Enumerable.FirstOrDefault</code> 找不到資料會給予預設值，使用上述的例子來示範一下</p>
+
+<figure class='code'><figcaption><span>Enumerable.First(會發生錯誤)</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">queryF</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">First</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">queryF</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vdzM5VWJwWWNzbGM" alt="Enumerable.First Result" /></p>
+
+<figure class='code'><figcaption><span>Enumerable.FirstOrDefault</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>    
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">query</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">FirstOrDefault</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span><span class="p">(</span><span class="n">query</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="k">default</span><span class="p">(</span><span class="n">KeyValuePair</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="kt">string</span><span class="p">&gt;))){</span>
+</span><span class='line'>  <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">query</span><span class="p">.</span><span class="n">Key</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vMWEzbFJFZl9CczQ" alt="Enumerable.First Result" /></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/11/03/windows-deleted-files-data-path-is-too-long/">Windows 刪除資料路徑太長的檔案</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-11-03T06:04:00+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>3</span><span class='date-suffix'>rd</span>, <span class='date-year'>2015</span></span> <span class='time'>6:04 am</span></time>
+        
+           | <a href="/blog/2015/11/03/windows-deleted-files-data-path-is-too-long/#disqus_thread"
+             data-disqus-identifier="http://shunnien.github.io/blog/2015/11/03/windows-deleted-files-data-path-is-too-long/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>在 windows 系統中用 npm 裝了一些 generator 後，有些路徑長得不像話，很容易就爆了，砍都砍不掉，就像下圖。
+<img src="https://googledrive.com/host/0B24tdidnsV1veC1vNUc4NUhheWM" alt="錯誤畫面" />
+當時又不想靠 7-zip 來刪除檔案，就想找有沒有便利的工具直接下指令刪除了，剛好看到這工具挺方便的</p>
+
+<h2>問題環境</h2>
+
+<blockquote><p>npm version:2.11
+OS: win 10</p></blockquote>
+
+<h2>問題原因</h2>
+
+<p>一方面是 npm 的設計，另一方面是 windows 環境下的問題，windows 下路徑檔名有長度限制。
+對於 npm 在 windows 環境下的設定與路徑說明，可以參考<a href="http://blog.miniasp.com/post/2015/09/02/Change-npm-default-global-installation-directory-for-nodejs-modules-in-Windows.aspx" title="保哥 如何在 Windows 平台變更 Node.js / npm 全域模組的預設安裝路徑">保哥的文章</a>；不是 npm 產生這問題的，也可以考慮以下解決方式，話說以前好像玩遊戲的時候搞出這種問題 >&lt;。</p>
+
+<h2>解決方式</h2>
+
+<p>遇到這種情形，解決方式有幾點
+* 改檔名，把路徑改到符合長度限制
+* 第三方工具</p>
+
+<p>第一種方式的土法煉鋼，除了真的想嘗試手指運動的人，我想應該不會有人想要這樣做，除非路徑長度剛好超出限制一點點。
+工具的部分介紹大家兩種：
+* <a href="http://www.7-zip.org/" title="7-zip">7-zip</a>，這是圖形化介面，簡單說就是滑鼠操作一下，今天就不說這個工具，想知道怎麼操作的可以參考一下 <a href="http://demo.tc/post/811" title="demoshop - Windows 系統中資料路徑太長無法刪除的解決辦法">demo 哥的文章</a>
+* <a href="https://www.npmjs.com/package/rimraf" title="rimraf">rimraf</a>，以下介紹這工具</p>
+
+<h3>第三方工具 <a href="https://www.npmjs.com/package/rimraf" title="rimraf">rimraf</a></h3>
+
+<p>這工具是 npm package ，可以直接在 cmd 直接執行，符合我的需求。順便說一下，我使用 npm 預設路徑，套用 Yeoman 的 Hottowel generator，擷取一小部分其檔案結構來看，應該不會有人想要一一刪除檔案
+<img src="https://googledrive.com/host/0B24tdidnsV1vNURfVm1PczF5U2s" alt="tree view" /></p>
+
+<h3>操作方式</h3>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rimraf(f, callback)</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vbUVhSmVtU0FlM0E" alt="cmder view" /></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/11/02/application-automatically-disabled/">Application Automatically Disabled</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-11-02T07:26:00+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>2</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>7:26 am</span></time>
+        
+           | <a href="/blog/2015/11/02/application-automatically-disabled/#disqus_thread"
+             data-disqus-identifier="http://shunnien.github.io/blog/2015/11/02/application-automatically-disabled/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>以下使用的 Server</p>
+
+<blockquote><p>Server：Win2008 R2</p></blockquote>
+
+<p>記錄一下 Server 的一些小事件，主要是因為早上突然發生了這個畫面
+<img src="https://googledrive.com/host/0B24tdidnsV1vb1Mya1AyZG1lcEE" alt="錯誤畫面" />
+一看就很明顯 Service 停止了，進去 Server 然後到 IIS 將 Application Pool Start 就好了；但是到底是如何自動關閉的，查看 <strong>Event Viewer</strong> 發現 IIS 有設定機制自動關閉的，訊息如下。
+<img src="https://googledrive.com/host/0B24tdidnsV1vZjVudzhfcGs3MUU" alt="Event Viewer" /></p>
+
+<h2>Rapid-Fail Protection</h2>
+
+<p>好吧，得知了有自動關閉機制，應該可以調整設定吧，繼續到 IIS -> Application Pools 如下圖
+<img src="https://googledrive.com/host/0B24tdidnsV1vQ241cHAzd0NVazQ" alt="Application Pools" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vNm5wRU5wTXRFY2c" alt="Advanced Settings" /></p>
+
+<p>設定的意義非常簡單，就是幾分鐘內發生幾次錯誤就自動關閉，想要詳細了解的可以參閱一下 <a href="https://msdn.microsoft.com/zh-tw/library/cc779875(v=ws.10).aspx" title="設定 IIS 6.0 中的快速失敗保護">MSDN</a> ；至於怎麼樣的警告會進行自動關閉呢？就是 IIS 發生錯誤，例如：IIS 發送 EMail 發送失敗&hellip;等等。此次就是因為信件發送的問題導致。</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/10/29/google-for-education/">Google App for Education 申請</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-10-29T03:39:00+08:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>29</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:39 am</span></time>
+        
+           | <a href="/blog/2015/10/29/google-for-education/#disqus_thread"
+             data-disqus-identifier="http://shunnien.github.io/blog/2015/10/29/google-for-education/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h3>緣由</h3>
+
+<p>因為基金會帳號資料凌亂，所以趁此機會統一申請，管理也較為方便</p>
+
+<h3>Googel App</h3>
+
+<p>提供許多服務，不過此處主要是說申請 Google Apps for Work ，這些申請可以分為
+1. <a href="https://www.google.com.tw/intx/zh-TW/work/apps/business/" title="Google Apps for Work">Google Apps for Work</a>
+2. <a href="https://www.google.com.tw/intl/zh-TW/edu/products/productivity-tools/" title="Google Apps for Education">Google Apps for Education</a></p>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vRFJKd2wzWkY5SGs" alt="相關解決方案" /></p>
+
+<h3>Education 申請流程－先行確認資格</h3>
+
+<p>要申請 education 有幾個資格，必須符合
+* 經由一般公認的認證單位評定合格的幼稚園到高中、高等教育機構或非營利組織
+* 獲得認證的非營利組織 (必須位於目前支援的 15 個國家/地區)。</p>
+
+<p>詳細的資料可以參考<a href="https://support.google.com/a/answer/139019?hl=zh-Hant" title="Google Apps for Education：常見問題">Google Education 常見問題</a>，在常見問題的【<em>哪些機構符合 Google Apps for Education 申請資格?</em>】可以觀看詳細資訊，由於我要申請的是非營利組織(基金會之類的)，所以可以看一下<a href="https://support.google.com/nonprofits/answer/3215869" title="獲得認證的非營利組織">獲得認證的非營利組織</a>，接著找尋<strong>台灣機構規範要點</strong>，如下所示</p>
+
+<blockquote><ul>
+<li>機構必須已向 TechSoup Global 的區域專責單位 <a href="https://techsoup-taiwan.org.tw/" title="TechSoup Taiwan">TechSoup Taiwan</a> 註冊。</li>
+<li>只有以下類型的機構符合申請資格：
+
+<ul>
+<li>以公益為目的且向相關政府機構註冊的協會和基金會
+
+<ul>
+<li>經中央政府審查及許可的全國機構</li>
+<li>由區域縣市政府相關局處審查及許可的地方機構</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</blockquote>
+
+<h3>註冊 TechSoup Taiwan</h3>
+
+<p>進入 <a href="https://techsoup-taiwan.org.tw/" title="TechSoup Taiwan">TechSoup Taiwan</a> 後，就來準備<a href="https://techsoup-taiwan.org.tw/user/register" title="TechSoup 註冊">註冊</a>了。首先填寫帳號資訊，就填想要使用的名稱與 mail 吧。
+<img src="https://googledrive.com/host/0B24tdidnsV1venFEN1dXcE1kRzg" alt="帳號資訊" />
+接著選擇主要服務內容，直接進行點選就可以了。
+<img src="https://googledrive.com/host/0B24tdidnsV1vb3hHWXJ2LTg2MVk" alt="服務內容" />
+然後 <strong>Organization registration</strong> 就是你所屬機構的資訊了，這邊都要使用英文輸入，英文地址的部分可以參考<a href="http://www.post.gov.tw/post/internet/SearchZone/index.jsp?ID=130112" title="郵局中文地址英譯">郵局中文地址英譯</a>
+<img src="https://googledrive.com/host/0B24tdidnsV1vc3dDXzRpbzRQYTA" alt="Organization registration" />
+Organization registered identifiers 都是要輸入登記書資訊，字號的翻譯可以參考<a href="http://www.iq-t.com/SYSCOM/pinyin1.asp" title="IQ Technology Inc. 中文拼音查詢及譯音轉換系統">IQ Technology Inc.</a>
+<img src="https://googledrive.com/host/0B24tdidnsV1vYXhDOTNpMm1yS3c" alt="Organization registered identifiers" />
+除了服務宗旨一定要輸入外，那些資訊就隨意啦
+<img src="https://googledrive.com/host/0B24tdidnsV1vbmZwU1pvMm5hTFU" alt="Organization Information" />
+最後就是填上聯絡資訊了，這邊都有提示輸入英文
+<img src="https://googledrive.com/host/0B24tdidnsV1vLVRvZG1ULTBPX1k" alt="Organization Contact" />
+然後註冊後會收到來信通知
+<img src="https://googledrive.com/host/0B24tdidnsV1vbUQ5T0pJQzdIeEE" alt="通知信內容" />
+這樣就註冊完成了。</p>
+
+<h3>註冊 Google App for Education</h3>
+
+<p>進入 <a href="https://www.google.com.tw/intl/zh-TW/edu/products/productivity-tools/" title="Google Apps for Education">Google for Education</a> 頁面，然後按照以下圖片快速進行下一步，這些都是提醒一些資訊而已
+<img src="https://googledrive.com/host/0B24tdidnsV1vQ0swQjhGUnZZM0E" alt="edu step1" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vRmtxeDg0RW9KZjA" alt="edu step2" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vaTRMQUdEUTVLNzg" alt="edu step3" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vUFowZUZLb3JNQ1U" alt="edu step4" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vS3dYcW01b0Y3SWM" alt="edu step5" /></p>
+
+<p>到這邊才是開始要輸入資訊，與確認的開始；發生什麼事!!!沒有我要的選項，先隨便選擇一個吧，後面會說明怎麼加入。
+<img src="https://googledrive.com/host/0B24tdidnsV1veEtleEFmSGQ1VUE" alt="edu input text" />
+輸入你的網域，等下要去進行確認
+<img src="https://googledrive.com/host/0B24tdidnsV1vd05sSWs1V3ptRTQ" alt="edu input domain" />
+最後進行申請
+<img src="https://googledrive.com/host/0B24tdidnsV1va3ZUeVdMSFlHTEE" alt="edu finally" /></p>
+
+<h3>加入非營利計畫</h3>
+
+<p>完成上述申請後，但是你還是只有 30 天試用期間，需要申請加入 <a href="https://www.google.com.tw/nonprofits/join/" title="Google 非營利服務申請">Gooogle 非營利計畫</a>，這就用到了我們開始申請的 <a href="https://techsoup-taiwan.org.tw/user/register" title="TechSoup 註冊">TechSoup</a>，首先登入 <a href="https://techsoup-taiwan.org.tw/" title="TechSoup Taiwan">TechSoup</a> 取得認證代碼
+<img src="https://googledrive.com/host/0B24tdidnsV1vd0V3MFRjU25Gc2c" alt="TechSoup 認證碼" />
+接著<a href="https://www.google.com.tw/nonprofits/join/" title="Google 非營利服務申請">到此連結</a>輸入剛剛的認證碼
+<img src="https://googledrive.com/host/0B24tdidnsV1vaXBDT2dBQnFjZlk" alt="Google 非營利版申請 Step1" />
+勾選一些條款，確認這些規定等等。
+<img src="https://googledrive.com/host/0B24tdidnsV1vaDRTX3lBWmVUNzg" alt="Google 非營利版申請 Step2" />
+填入申請資訊
+<img src="https://googledrive.com/host/0B24tdidnsV1vaWdaNl9FMGtXRzQ" alt="Google 非營利版申請 Step3" />
+這樣就算加入完成了，接下來就要進行 Google Apps for Education 的方案升級，現在你的方案應該都是 30 天試用版，要升級成為免費版本，由[Google 非營利服務]進入，還沒登入的話進行登入，登入後就可以看到以下畫面，點選立即申請
+<img src="https://googledrive.com/host/0B24tdidnsV1vUDVWck9XelBaUDg" alt="Google 非營利版產品申請" />
+接著會看到你可以申請的產品，這邊我主要申請 Google Apps 非營利版
+<img src="https://googledrive.com/host/0B24tdidnsV1vRGh0OFhDRm01ZTg" alt="非營利版產品選擇" />
+最後勾選確認資料
+<img src="https://googledrive.com/host/0B24tdidnsV1vRHZvblNRTGpNN0U" alt="確認選擇" />
+接著 Google 會發送信件給你，如果你有設定 MX Record 的話，可以直接進 Gmail 信箱收信，會收到這封信件
+最後就是等待通知就可以了。
+<img src="https://googledrive.com/host/0B24tdidnsV1vekVmelU0eThHSXM" alt="升級通知信" /></p>
+
+<h2>感想</h2>
+
+<p>這次主要在網域的驗證一直有許多問題，畢竟我沒有權限去那邊進行設定，所以一直莫名其妙一堆問題，後來發現不知道誰有設定權限給我，自訂按照 Google 上的 <a href="https://support.google.com/a/answer/6149697?hl=en" title="AWS Setting">AWS</a> 說明，就挺順利的，這次到這邊結束了，感覺挺繁瑣的申請步驟～～～</p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/10/26/cryptojs-sample/">CryptoJs Sample</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-10-26T10:57:00+08:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>26</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>10:57 am</span></time>
+        
+           | <a href="/blog/2015/10/26/cryptojs-sample/#disqus_thread"
+             data-disqus-identifier="http://shunnien.github.io/blog/2015/10/26/cryptojs-sample/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2><a href="https://code.google.com/p/crypto-js/" title="crypto-js">Crypto-JS</a></h2>
+
+<p>我主要採用 code.google 上的資料說明為主，此 Library 支援
+* Hashers
+    * MD5
+    * SHA-1
+    * SHA-2
+    * SHA-3
+    * RIPEMD-160
+  * HMAC
+      * HMAC-MD5
+        * HMAC-SHA1
+        * HMAC-SHA256
+        * HMAC-SHA512
+    * PBKDF2
+* Ciphers
+    * AES
+  * DES, Triple DES
+  * Rabbit
+  * RC4, RC4Drop</p>
+
+<p>除了上述支持的算法之外，尚有許多功能，此篇著重在 <a href="https://code.google.com/p/crypto-js/" title="crypto-js">CryptoJS</a> 中的 <a href="http://www.codedata.com.tw/social-coding/aes/" title="AES 對稱式加解密法 - CodeData">AES</a> 加解密部分，順便弄了簡單的加解密 sample 看之後有時間來慢慢將他把功能完善；好了，閒話不多說，還是趕快把此次範例中的注意事項與 code 展示吧。</p>
+
+<p>以下為官方所展示的的 AES 範例</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>&lt;script src="http://crypto-js.googlecode.com/svn/tags/3.1.2/build/rollups/aes.js"&gt;&lt;/script&gt;
+</span><span class='line'>&lt;script&gt;
+</span><span class='line'>    var encrypted = CryptoJS.AES.encrypt("Message", "Secret Passphrase");
+</span><span class='line'>
+</span><span class='line'>    var decrypted = CryptoJS.AES.decrypt(encrypted, "Secret Passphrase");
+</span><span class='line'>&lt;/script&gt;</span></code></pre></td></tr></table></div></figure>
+
+
+<p>CryptoJS 在 The Advanced Encryption Standard (AES) 支援了
+* AES-128
+* AES-192
+* AES-256</p>
+
+<p>另外，像這個官方範例其實預設了很多預設值，假如沒有指定 key 長度的話，預設是使用 256-bit。</p>
+
+<iframe width="100%" height="300" src="//jsfiddle.net/wiamyu/7t32w98f/13/embedded/" allowfullscreen="allowfullscreen" frameborder="0"></iframe>
+
+
+<p>比較需要注意一下解碼，解碼出來的資料預設是經過編碼轉換過的，所以你要得到你原來的資料，要在編碼轉換一次。</p>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vRVE2Z3FCZU82UXc" alt="CryptoJS object " /></p>
+
+<p>最後提供二個線上加解密資源，有一個其實是 Demo
+<a href="http://tool.oschina.net/encrypt">在线工具 - 开源中国</a>
+<a href="http://cryptojs.altervista.org/api/demo.html">LJavaScript Cryptography</a>
+<a href="https://github.com/brix/crypto-js">crypto-js 的 Github</a></p>
+</div>
+  
+  
+
+
+    </article>
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/10/22/sql-server-access-to-all-field-definitions/">Sql Server 取得所有欄位定義</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-10-22T04:11:00+08:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>4:11 am</span></time>
+        
+           | <a href="/blog/2015/10/22/sql-server-access-to-all-field-definitions/#disqus_thread"
+             data-disqus-identifier="http://shunnien.github.io/blog/2015/10/22/sql-server-access-to-all-field-definitions/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><p>把一些以前整理的東西，紀錄一下</p>
+
+<p>此部分最好在 Sql Server 2005 以上使用， Sql Server 2000 就沒使用過</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+<span class='line-number'>23</span>
+<span class='line-number'>24</span>
+<span class='line-number'>25</span>
+<span class='line-number'>26</span>
+<span class='line-number'>27</span>
+<span class='line-number'>28</span>
+<span class='line-number'>29</span>
+<span class='line-number'>30</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>SELECT
+</span><span class='line'>CASE  a.TABLE_TYPE
+</span><span class='line'>WHEN  'BASE TABLE'  THEN '資料表'
+</span><span class='line'>WHEN 'VIEW'  THEN '檢視表'
+</span><span class='line'>END as 表格類型 ,
+</span><span class='line'>    a.TABLE_NAME                as 表格名稱,
+</span><span class='line'>    b.COLUMN_NAME               as 欄位名稱,
+</span><span class='line'>    b.DATA_TYPE                 as 資料型別,
+</span><span class='line'>    b.CHARACTER_MAXIMUM_LENGTH  as 最大長度,
+</span><span class='line'>    b.COLUMN_DEFAULT            as 預設值,
+</span><span class='line'>    b.IS_NULLABLE               as 允許空值,
+</span><span class='line'>    (
+</span><span class='line'>        SELECT
+</span><span class='line'>            value
+</span><span class='line'>        FROM
+</span><span class='line'>            fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 
+</span><span class='line'>                                     a.TABLE_NAME, 'column', default)
+</span><span class='line'>        WHERE
+</span><span class='line'>            name='MS_Description' 
+</span><span class='line'>            and objtype='COLUMN' 
+</span><span class='line'>            and objname Collate Chinese_Taiwan_Stroke_CI_AS=b.COLUMN_NAME
+</span><span class='line'>    ) as 欄位備註
+</span><span class='line'>FROM
+</span><span class='line'>    INFORMATION_SCHEMA.TABLES  a
+</span><span class='line'>    LEFT JOIN INFORMATION_SCHEMA.COLUMNS b ON (a.TABLE_NAME=b.TABLE_NAME)
+</span><span class='line'>--WHERE
+</span><span class='line'>--    TABLE_TYPE='VIEW'
+</span><span class='line'>--    TABLE_TYPE='BASE TABLE'
+</span><span class='line'>ORDER BY
+</span><span class='line'>   a.TABLE_TYPE, a.TABLE_NAME, ordinal_position</span></code></pre></td></tr></table></div></figure>
+
+</div>
+  
+  
+
+
+    </article>
+  
+  <div class="pagination">
+    
+    <a href="/blog/archives">Blog Archives</a>
+    
+    <a class="next" href="/index.html">Newer &rarr;</a>
+    
+  </div>
+</div>
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/11/13/the-viewbag-doesnt-exist-in-the-current-context/">Visual Studio 2015 the ViewBag Doesn't Exist in the Current Context</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/11/12/octopress-jia-ru-category-fen-lei/">Octopress 加入 Category(分類)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/11/11/litopress-geng-huan-license-footer/">Octopress 更換 License(footer)</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Top Categories</h1>
+    <ul id="top-category-list"><li><a href='/blog/categories/blog'>blog (4)</a></li><li><a href='/blog/categories/octopress'>octopress (4)</a></li><li><a href='/blog/categories/linq'>linq (1)</a></li><li><a href='/blog/categories/github'>github (1)</a></li><li><a href='/blog/categories/asp-dot-net-mvc-5'>asp.net mvc 5 (1)</a></li><li><a href='/blog/categories/windows10'>windows10 (1)</a></li></ul>
+</section><section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc-5' style='font-size: 115.0%'>asp.net mvc 5</a> <a href='/blog/categories/blog' style='font-size: 160.0%'>blog</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/github' style='font-size: 115.0%'>github</a> <a href='/blog/categories/google' style='font-size: 115.0%'>google</a> <a href='/blog/categories/iis7-dot-5' style='font-size: 115.0%'>iis7.5</a> <a href='/blog/categories/linq' style='font-size: 115.0%'>linq</a> <a href='/blog/categories/npm' style='font-size: 115.0%'>npm</a> <a href='/blog/categories/octopress' style='font-size: 160.0%'>octopress</a> <a href='/blog/categories/rubyonrails' style='font-size: 115.0%'>rubyonrails</a> <a href='/blog/categories/sql' style='font-size: 115.0%'>sql</a> <a href='/blog/categories/sqlserver' style='font-size: 115.0%'>sqlserver</a> <a href='/blog/categories/visual-studio-2015' style='font-size: 115.0%'>visual studio 2015</a> <a href='/blog/categories/windows10' style='font-size: 115.0%'>windows10</a> <a href='/blog/categories/windwos' style='font-size: 115.0%'>windwos</a> </span>
+</section><section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/asp-dot-net-mvc-5'>asp.net mvc 5 (1)</a></li><li><a href='/blog/categories/blog'>blog (4)</a></li><li><a href='/blog/categories/c-number'>c# (1)</a></li><li><a href='/blog/categories/github'>github (1)</a></li><li><a href='/blog/categories/google'>google (1)</a></li><li><a href='/blog/categories/iis7-dot-5'>iis7.5 (1)</a></li><li><a href='/blog/categories/linq'>linq (1)</a></li><li><a href='/blog/categories/npm'>npm (1)</a></li><li><a href='/blog/categories/octopress'>octopress (4)</a></li><li><a href='/blog/categories/rubyonrails'>rubyonrails (1)</a></li><li><a href='/blog/categories/sql'>sql (1)</a></li><li><a href='/blog/categories/sqlserver'>sqlserver (1)</a></li><li><a href='/blog/categories/visual-studio-2015'>visual studio 2015 (1)</a></li><li><a href='/blog/categories/windows10'>windows10 (1)</a></li><li><a href='/blog/categories/windwos'>windwos (1)</a></li></ul>
+</section>
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/shunnien">@shunnien</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'shunnien',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/113838943770679866520?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="創用 CC 授權條款" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>
+    <br />本著作由
+    <a xmlns:cc="http://creativecommons.org/ns#" href="shunnien.github.io" property="cc:attributionName" rel="cc:attributionURL">ShunNien Yu</a>製作，以<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">創用CC 姓名標示-非商業性 4.0 國際 授權條款</a>釋出。
+    <br />Copyright &copy; 2015 - ShunNien Yu(Allen Yu) -
+    <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shunniengithubblog';
+      
+        
+        var disqus_script = 'count.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

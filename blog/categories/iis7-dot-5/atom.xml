@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: iis7.5 | ShunNien's Blog]]></title>
+  <link href="http://shunnien.github.io/blog/categories/iis7-dot-5/atom.xml" rel="self"/>
+  <link href="http://shunnien.github.io/"/>
+  <updated>2015-11-17T16:11:30+08:00</updated>
+  <id>http://shunnien.github.io/</id>
+  <author>
+    <name><![CDATA[ShunNien Yu(Allen Yu)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Application Automatically Disabled]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/02/application-automatically-disabled/"/>
+    <updated>2015-11-02T07:26:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/02/application-automatically-disabled</id>
+    <content type="html"><![CDATA[<p>以下使用的 Server</p>
+
+<blockquote><p>Server：Win2008 R2</p></blockquote>
+
+<p>記錄一下 Server 的一些小事件，主要是因為早上突然發生了這個畫面
+<img src="https://googledrive.com/host/0B24tdidnsV1vb1Mya1AyZG1lcEE" alt="錯誤畫面" />
+一看就很明顯 Service 停止了，進去 Server 然後到 IIS 將 Application Pool Start 就好了；但是到底是如何自動關閉的，查看 <strong>Event Viewer</strong> 發現 IIS 有設定機制自動關閉的，訊息如下。
+<img src="https://googledrive.com/host/0B24tdidnsV1vZjVudzhfcGs3MUU" alt="Event Viewer" /></p>
+
+<h2>Rapid-Fail Protection</h2>
+
+<p>好吧，得知了有自動關閉機制，應該可以調整設定吧，繼續到 IIS -> Application Pools 如下圖
+<img src="https://googledrive.com/host/0B24tdidnsV1vQ241cHAzd0NVazQ" alt="Application Pools" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vNm5wRU5wTXRFY2c" alt="Advanced Settings" /></p>
+
+<p>設定的意義非常簡單，就是幾分鐘內發生幾次錯誤就自動關閉，想要詳細了解的可以參閱一下 <a href="https://msdn.microsoft.com/zh-tw/library/cc779875(v=ws.10).aspx" title="設定 IIS 6.0 中的快速失敗保護">MSDN</a> ；至於怎麼樣的警告會進行自動關閉呢？就是 IIS 發生錯誤，例如：IIS 發送 EMail 發送失敗&hellip;等等。此次就是因為信件發送的問題導致。</p>
+]]></content>
+  </entry>
+  
+</feed>

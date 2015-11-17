@@ -1,0 +1,380 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>First() 跟 FirstOrDefault() - ShunNien's Blog</title>
+  <meta name="author" content="ShunNien Yu(Allen Yu)">
+
+  
+  <meta name="description" content="緣起 前陣子有個朋友跟我詢問一段 LINQ 的 code，說輸出不是他想要的值，不過當時我去倒杯水，想說回來再看的時候，他自己搞定了 XD，雖然已經解決了，但是既然都抽出時間了，就還是看一下，看到他使用了 First() 去解決，就問他怎麼不使用 FirstOrDefault ，不過那段 code &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shunnien.github.io/blog/2015/11/04/first-with-the-firstordefault/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="ShunNien's Blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-62183976-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ShunNien's Blog</a></h1>
+  
+    <h2>不積跬步，無以致千里；不積小流，無以成江海。</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="shunnien.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/categories/">Categories</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">First() 跟 FirstOrDefault()</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-11-04T14:46:00+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:46 pm</span></time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://shunnien.github.io">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>緣起</h2>
+
+<p>前陣子有個朋友跟我詢問一段 <a href="https://msdn.microsoft.com/zh-tw/library/bb397897.aspx" title="LINQ">LINQ</a> 的 code，說輸出不是他想要的值，不過當時我去倒杯水，想說回來再看的時候，他自己搞定了 XD，雖然已經解決了，但是既然都抽出時間了，就還是看一下，看到他使用了 First() 去解決，就問他怎麼不使用 FirstOrDefault ，不過那段 code 還是有些需要調整的地方就是了，以下就先來看看這個問題吧(我憑印象中的 code ，可能跟當時的有點落差)。</p>
+
+<h2>問題</h2>
+
+<figure class='code'><figcaption><span>C#</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;zipCode&quot;</span><span class="p">,</span><span class="s">&quot;郵遞區號&quot;</span><span class="p">},</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">string</span> <span class="n">str</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span> <span class="s">&quot;縣市&quot;</span><span class="p">).</span><span class="n">Select</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Key</span><span class="p">).</span><span class="n">ToString</span><span class="p">();</span>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>上面的程式碼會輸出以下的結果，但是其目的是想要輸出為 city</p>
+
+<figure class='code'><figcaption><span>C#</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">System</span><span class="p">.</span><span class="n">Linq</span><span class="p">.</span><span class="n">Enumerable</span><span class="p">+</span><span class="n">WhereSelectEnumerableIterator</span><span class="err">`</span><span class="m">2</span><span class="p">[</span><span class="n">System</span><span class="p">.</span><span class="n">Collections</span><span class="p">.</span><span class="n">Generic</span><span class="p">.</span><span class="n">KeyValuePair</span><span class="err">`</span><span class="m">2</span><span class="p">[</span><span class="n">System</span><span class="p">.</span><span class="n">String</span><span class="p">,</span><span class="n">System</span><span class="p">.</span><span class="n">String</span><span class="p">],</span><span class="n">System</span><span class="p">.</span><span class="n">String</span><span class="p">]</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>為什麼會輸出這個，也很簡單，LINQ 的 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb548891(v=vs.100).aspx" title="MSDN - Enumerable.Select">Select</a> 回傳的型別是<code>IEnumerable&lt;TResult&gt;</code>也就是說是個物件，因此在物件後面直接使用 <a href="https://msdn.microsoft.com/zh-tw/library/system.object.tostring(v=vs.110).aspx" title="Object.ToString">ToString()</a> 就是直接輸出該物件的型別狀態</p>
+
+<h2>解決方法</h2>
+
+<p>既然知道了原因，那就有了解決方法，加上個<code>First()</code>或是<code>FirstOrDefault()</code>就可以了，改正如下</p>
+
+<figure class='code'><figcaption><span>C#</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;zipCode&quot;</span><span class="p">,</span><span class="s">&quot;郵遞區號&quot;</span><span class="p">},</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">string</span> <span class="n">str</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">Where</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span> <span class="s">&quot;縣市&quot;</span><span class="p">).</span><span class="n">Select</span><span class="p">(</span><span class="n">x</span> <span class="p">=&gt;</span> <span class="n">x</span><span class="p">.</span><span class="n">Key</span><span class="p">).</span><span class="n">First</span><span class="p">().</span><span class="n">ToString</span><span class="p">();</span>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">str</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<h2><a href="https://msdn.microsoft.com/en-us/library/vstudio/bb535050(v=vs.100).aspx" title="Enumerable.First">First</a> 與 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb340482(v=vs.100).aspx" title="Enumerable.FirstOrDefault">FirstOrDefault</a></h2>
+
+<p>就是看到朋友是使用<code>First</code>解決，才想把<code>First</code>跟<code>FirstOrDefault</code>一起列出來，不過上面的 code 是示意而已，不要太介意為啥這樣寫。現在先來說明，<a href="https://msdn.microsoft.com/en-us/library/vstudio/bb535050(v=vs.100).aspx" title="Enumerable.First">First</a> 跟 <a href="https://msdn.microsoft.com/zh-tw/library/vstudio/bb340482(v=vs.100).aspx" title="Enumerable.FirstOrDefault">FirstOrDefault</a> 差別在哪裡，其實兩者相差的點很簡單，使用<code>Enumerable.First</code>找不到資料的時候會出錯，而使用<code>Enumerable.FirstOrDefault</code> 找不到資料會給予預設值，使用上述的例子來示範一下</p>
+
+<figure class='code'><figcaption><span>Enumerable.First(會發生錯誤)</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+</pre></td><td class='code'><pre><code class='c#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">queryF</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">First</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">queryF</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vdzM5VWJwWWNzbGM" alt="Enumerable.First Result" /></p>
+
+<figure class='code'><figcaption><span>Enumerable.FirstOrDefault</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+</pre></td><td class='code'><pre><code class='C#'><span class='line'><span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;</span> <span class="n">Address</span> <span class="p">=</span> <span class="k">new</span> <span class="n">Dictionary</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span> <span class="kt">string</span><span class="p">&gt;(){</span>    
+</span><span class='line'>  <span class="p">{</span><span class="s">&quot;city&quot;</span><span class="p">,</span><span class="s">&quot;縣市&quot;</span><span class="p">}</span>
+</span><span class='line'><span class="p">};</span>
+</span><span class='line'><span class="kt">var</span> <span class="n">query</span> <span class="p">=</span> <span class="n">Address</span><span class="p">.</span><span class="n">FirstOrDefault</span><span class="p">(</span><span class="n">p</span> <span class="p">=&gt;</span> <span class="n">p</span><span class="p">.</span><span class="n">Value</span> <span class="p">==</span><span class="s">&quot;2&quot;</span><span class="p">);</span>
+</span><span class='line'><span class="k">if</span><span class="p">(</span><span class="n">query</span><span class="p">.</span><span class="n">Equals</span><span class="p">(</span><span class="k">default</span><span class="p">(</span><span class="n">KeyValuePair</span><span class="p">&lt;</span><span class="kt">string</span><span class="p">,</span><span class="kt">string</span><span class="p">&gt;))){</span>
+</span><span class='line'>  <span class="n">Console</span><span class="p">.</span><span class="n">WriteLine</span><span class="p">(</span><span class="n">query</span><span class="p">.</span><span class="n">Key</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vMWEzbFJFZl9CczQ" alt="Enumerable.First Result" /></p>
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">ShunNien Yu(Allen Yu)</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-11-04T14:46:00+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>4</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>2:46 pm</span></time>
+      
+
+<span class="categories">
+  
+    <a class='category' href='/blog/categories/c-number/'>c#</a>, <a class='category' href='/blog/categories/linq/'>linq</a>
+  
+</span>
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://shunnien.github.io/blog/2015/11/04/first-with-the-firstordefault/" data-via="" data-counturl="http://shunnien.github.io/blog/2015/11/04/first-with-the-firstordefault/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/11/03/windows-deleted-files-data-path-is-too-long/" title="Previous Post: windows 刪除資料路徑太長的檔案">&laquo; windows 刪除資料路徑太長的檔案</a>
+      
+      
+        <a class="basic-alignment right" href="/blog/2015/11/05/in-windwos-install-ruby-on-rails/" title="Next Post: 在 Windows 安裝 Ruby on Rails">在 Windows 安裝 Ruby on Rails &raquo;</a>
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/11/13/the-viewbag-doesnt-exist-in-the-current-context/">Visual Studio 2015 the ViewBag Doesn't Exist in the Current Context</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/11/12/octopress-jia-ru-category-fen-lei/">Octopress 加入 Category(分類)</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/11/11/litopress-geng-huan-license-footer/">Octopress 更換 License(footer)</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Top Categories</h1>
+    <ul id="top-category-list"><li><a href='/blog/categories/blog'>blog (4)</a></li><li><a href='/blog/categories/octopress'>octopress (4)</a></li><li><a href='/blog/categories/linq'>linq (1)</a></li><li><a href='/blog/categories/github'>github (1)</a></li><li><a href='/blog/categories/asp-dot-net-mvc-5'>asp.net mvc 5 (1)</a></li><li><a href='/blog/categories/windows10'>windows10 (1)</a></li></ul>
+</section><section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc-5' style='font-size: 115.0%'>asp.net mvc 5</a> <a href='/blog/categories/blog' style='font-size: 160.0%'>blog</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/github' style='font-size: 115.0%'>github</a> <a href='/blog/categories/google' style='font-size: 115.0%'>google</a> <a href='/blog/categories/iis7-dot-5' style='font-size: 115.0%'>iis7.5</a> <a href='/blog/categories/linq' style='font-size: 115.0%'>linq</a> <a href='/blog/categories/npm' style='font-size: 115.0%'>npm</a> <a href='/blog/categories/octopress' style='font-size: 160.0%'>octopress</a> <a href='/blog/categories/rubyonrails' style='font-size: 115.0%'>rubyonrails</a> <a href='/blog/categories/sql' style='font-size: 115.0%'>sql</a> <a href='/blog/categories/sqlserver' style='font-size: 115.0%'>sqlserver</a> <a href='/blog/categories/visual-studio-2015' style='font-size: 115.0%'>visual studio 2015</a> <a href='/blog/categories/windows10' style='font-size: 115.0%'>windows10</a> <a href='/blog/categories/windwos' style='font-size: 115.0%'>windwos</a> </span>
+</section><section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/asp-dot-net-mvc-5'>asp.net mvc 5 (1)</a></li><li><a href='/blog/categories/blog'>blog (4)</a></li><li><a href='/blog/categories/c-number'>c# (1)</a></li><li><a href='/blog/categories/github'>github (1)</a></li><li><a href='/blog/categories/google'>google (1)</a></li><li><a href='/blog/categories/iis7-dot-5'>iis7.5 (1)</a></li><li><a href='/blog/categories/linq'>linq (1)</a></li><li><a href='/blog/categories/npm'>npm (1)</a></li><li><a href='/blog/categories/octopress'>octopress (4)</a></li><li><a href='/blog/categories/rubyonrails'>rubyonrails (1)</a></li><li><a href='/blog/categories/sql'>sql (1)</a></li><li><a href='/blog/categories/sqlserver'>sqlserver (1)</a></li><li><a href='/blog/categories/visual-studio-2015'>visual studio 2015 (1)</a></li><li><a href='/blog/categories/windows10'>windows10 (1)</a></li><li><a href='/blog/categories/windwos'>windwos (1)</a></li></ul>
+</section>
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/shunnien">@shunnien</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'shunnien',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/113838943770679866520?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="創用 CC 授權條款" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>
+    <br />本著作由
+    <a xmlns:cc="http://creativecommons.org/ns#" href="shunnien.github.io" property="cc:attributionName" rel="cc:attributionURL">ShunNien Yu</a>製作，以<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">創用CC 姓名標示-非商業性 4.0 國際 授權條款</a>釋出。
+    <br />Copyright &copy; 2015 - ShunNien Yu(Allen Yu) -
+    <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shunniengithubblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shunnien.github.io/blog/2015/11/04/first-with-the-firstordefault/';
+        var disqus_url = 'http://shunnien.github.io/blog/2015/11/04/first-with-the-firstordefault/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

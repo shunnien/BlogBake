@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Npm | ShunNien's Blog]]></title>
+  <link href="http://shunnien.github.io/blog/categories/npm/atom.xml" rel="self"/>
+  <link href="http://shunnien.github.io/"/>
+  <updated>2015-11-17T16:11:30+08:00</updated>
+  <id>http://shunnien.github.io/</id>
+  <author>
+    <name><![CDATA[ShunNien Yu(Allen Yu)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Windows 刪除資料路徑太長的檔案]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/03/windows-deleted-files-data-path-is-too-long/"/>
+    <updated>2015-11-03T06:04:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/03/windows-deleted-files-data-path-is-too-long</id>
+    <content type="html"><![CDATA[<p>在 windows 系統中用 npm 裝了一些 generator 後，有些路徑長得不像話，很容易就爆了，砍都砍不掉，就像下圖。
+<img src="https://googledrive.com/host/0B24tdidnsV1veC1vNUc4NUhheWM" alt="錯誤畫面" />
+當時又不想靠 7-zip 來刪除檔案，就想找有沒有便利的工具直接下指令刪除了，剛好看到這工具挺方便的</p>
+
+<h2>問題環境</h2>
+
+<blockquote><p>npm version:2.11
+OS: win 10</p></blockquote>
+
+<h2>問題原因</h2>
+
+<p>一方面是 npm 的設計，另一方面是 windows 環境下的問題，windows 下路徑檔名有長度限制。
+對於 npm 在 windows 環境下的設定與路徑說明，可以參考<a href="http://blog.miniasp.com/post/2015/09/02/Change-npm-default-global-installation-directory-for-nodejs-modules-in-Windows.aspx" title="保哥 如何在 Windows 平台變更 Node.js / npm 全域模組的預設安裝路徑">保哥的文章</a>；不是 npm 產生這問題的，也可以考慮以下解決方式，話說以前好像玩遊戲的時候搞出這種問題 >&lt;。</p>
+
+<h2>解決方式</h2>
+
+<p>遇到這種情形，解決方式有幾點
+* 改檔名，把路徑改到符合長度限制
+* 第三方工具</p>
+
+<p>第一種方式的土法煉鋼，除了真的想嘗試手指運動的人，我想應該不會有人想要這樣做，除非路徑長度剛好超出限制一點點。
+工具的部分介紹大家兩種：
+* <a href="http://www.7-zip.org/" title="7-zip">7-zip</a>，這是圖形化介面，簡單說就是滑鼠操作一下，今天就不說這個工具，想知道怎麼操作的可以參考一下 <a href="http://demo.tc/post/811" title="demoshop - Windows 系統中資料路徑太長無法刪除的解決辦法">demo 哥的文章</a>
+* <a href="https://www.npmjs.com/package/rimraf" title="rimraf">rimraf</a>，以下介紹這工具</p>
+
+<h3>第三方工具 <a href="https://www.npmjs.com/package/rimraf" title="rimraf">rimraf</a></h3>
+
+<p>這工具是 npm package ，可以直接在 cmd 直接執行，符合我的需求。順便說一下，我使用 npm 預設路徑，套用 Yeoman 的 Hottowel generator，擷取一小部分其檔案結構來看，應該不會有人想要一一刪除檔案
+<img src="https://googledrive.com/host/0B24tdidnsV1vNURfVm1PczF5U2s" alt="tree view" /></p>
+
+<h3>操作方式</h3>
+
+<pre><code>rimraf(f, callback)
+</code></pre>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vbUVhSmVtU0FlM0E" alt="cmder view" /></p>
+]]></content>
+  </entry>
+  
+</feed>

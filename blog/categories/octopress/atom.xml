@@ -1,0 +1,354 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Octopress | ShunNien's Blog]]></title>
+  <link href="http://shunnien.github.io/blog/categories/octopress/atom.xml" rel="self"/>
+  <link href="http://shunnien.github.io/"/>
+  <updated>2015-11-17T16:11:30+08:00</updated>
+  <id>http://shunnien.github.io/</id>
+  <author>
+    <name><![CDATA[ShunNien Yu(Allen Yu)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress 加入 Category(分類)]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/12/octopress-jia-ru-category-fen-lei/"/>
+    <updated>2015-11-12T11:05:23+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/12/octopress-jia-ru-category-fen-lei</id>
+    <content type="html"><![CDATA[<h2>緣起</h2>
+
+<p>部落格文章一旦變多起來，就需要進行整理，而且為了讓慣看的人能夠快速簡單的找尋，最好進行分類列表，所以經由官網上的說明套入 Category 插件。</p>
+
+<h2>找尋套件</h2>
+
+<p>先搜尋一下 Octopress 對於 Category 的相關套件，發現這篇文章 <a href="http://time.to.pullthepl.ug/blog/2012/8/20/octopress-top-categories-plugin/" title="Time To Pull The Plug:Octopress Top Categories Plugin">Octopress Top Categories Plugin</a>，看到該篇文章中提到有人開發了 <a href="https://github.com/alswl/octopress-category-list" title="alswl octopress-category-list">octopress-category-list</a> 這套件，這個套件也是作者 Fork <a href="https://github.com/tokkonopapa/octopress-tagcloud">octopress-tagcloud</a> 調整而來的，此篇<a href="https://github.com/ctdk/octopress-category-list" title="ctdk octopress-category-list">文章作者自己又 Fork 調整了一版</a>，我就偷懶一點直接 Fork 作者自己調整的這版，這樣之後我就可以直接變動<a href="https://github.com/shunnien/octopress-category-list" title="shunnien octopress-category-list">我的版本</a>。</p>
+
+<h2>安裝套件</h2>
+
+<p>這部份很簡易，請<a href="https://github.com/shunnien/octopress-category-list" title="shunnien octopress-category-list">到此</a>直接下載，或是直接 git clone 一份，等下要把檔案複製到您的 octopress 資料夾下
+<img src="/files/2015-11-12/2015-11-12_12-04-15.png" alt="Github Download ZIP" /></p>
+
+<p>在剛剛下載的檔案中可以看到以下檔案</p>
+
+<h2>Files:</h2>
+
+<pre><code>.
+├───plugins
+│   └── category_list.rb
+└───source
+    ├───categories
+    │   └── index.markdown
+    └───_includes
+        └───custom
+            ├───navigation.html
+            └───asides
+                ├─ category_cloud.html
+                ├─ category_list.html
+                └─ category_cloud.html
+</code></pre>
+
+<p>這些檔案按照同樣的路徑放到您的 octopress 資料夾下，先把<code>category_list.rb</code>這檔案放到 plugins 資料夾下，這是 plugin 的核心 code。
+接著修改您的<code>_config.yml</code>，在<code>default_asides</code>增加套件的 html 檔案路徑與名稱，就是 <em>category_cloud.html、category_list.html、category_cloud.html</em> 這三個檔案，這個是設定側邊欄位的顯示。示範如下
+<code>
+default_asides: [
+    asides/recent_posts.html,
+    custom/asides/top_category_list.html,
+    custom/asides/category_cloud.html,
+    custom/asides/category_list.html,
+    asides/github.html,
+    asides/googleplus.html
+]
+</code>
+接著建立頁面上方的選單
+<img src="/files/2015-11-12/2015-11-12_12-16-54.png" alt="blog menu link" /></p>
+
+<p>請參照上方的 Files tree，將 source 資料夾下的 categories 複製到您的 octopress/source 下，再把 navigation.html 複製到您的資料夾下，確認每個檔案都按照路徑複製就可以了。</p>
+
+<blockquote><p>上述的步驟太複雜的話，教大家簡單的方式：
+將下載的 octopress-category-list 檔案開啟後，複製 plugins 跟 source 資料夾，貼上自己的 octopress 資料夾下</p></blockquote>
+
+<h2>執行</h2>
+
+<p>一樣使用指令碼進行觀看
+<code>
+rake preview
+</code></p>
+
+<p>完成的話，直接發布了
+<code>
+rake deploy
+</code></p>
+
+<h2>碎碎念</h2>
+
+<p>其實後來在看 <a href="http://kaworu.github.io/octostrap3/">octostrap3</a>，在考慮要不要使用，看起來的版面挺漂亮的，可能等以後再使用了～</p>
+
+<h2>參考資料</h2>
+
+<ul>
+<li><a href="https://github.com/tokkonopapa/octopress-tagcloud">octopress-tagcloud</a></li>
+<li><a href="http://time.to.pullthepl.ug/blog/2012/8/20/octopress-top-categories-plugin/" title="Time To Pull The Plug:Octopress Top Categories Plugin">Time To Pull The Plug:Octopress Top Categories Plugin</a></li>
+<li><a href="http://www.nealsheeran.com/archives/2013/01/octopress-category-list/">Neal Sheeran:Octopress Category List</a></li>
+<li><a href="http://wen00072.github.io/blog/2015/03/31/add-categories-list-plugin-to-octopress/" title="My code works, I don’t know why.:Add Categories List Plugin to Octopress">My code works, I don’t know why.:Add Categories List Plugin to Octopress</a></li>
+<li><a href="http://blog.eddie.com.tw/2011/12/05/add-catetories-to-sidebar-in-octopress/">高見龍:幫你的 Octopress 增加文章分類</a></li>
+<li><a href="https://github.com/alswl/octopress-category-list" title="alswl octopress-category-list">alswl octopress-category-list</a></li>
+<li><a href="https://github.com/ctdk/octopress-category-list" title="ctdk octopress-category-list">ctdk octopress-category-list</a></li>
+<li><a href="https://github.com/shunnien/octopress-category-list" title="shunnien octopress-category-list">shunnien octopress-category-list</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress 更換 License(footer)]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/11/litopress-geng-huan-license-footer/"/>
+    <updated>2015-11-11T16:44:05+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/11/litopress-geng-huan-license-footer</id>
+    <content type="html"><![CDATA[<h2>緣起</h2>
+
+<p>現在網路上大家都很注重產權，因此應該在 footer 標示授權，而且還可以自己更動一下 footer</p>
+
+<h2><a href="http://creativecommons.org/">Creative Commons</a></h2>
+
+<p>首先建立自己的授權資訊，因此進入 <a href="http://creativecommons.org/">Creative Commons</a> 連結，點選 <strong>Licenses</strong> 的選單，出現下拉選單後，選擇 <strong>Choose a License</strong>
+<img src="/files/2015-11-11/2015-11-11_16-58-17.png" alt="CC Index munu choose" /></p>
+
+<p>此頁面有提供多語言轉換，所以頁面底下可以選擇看的懂的語言。
+<img src="/files/2015-11-11/2015-11-11_17-00-41.png" alt="CC choose language" /></p>
+
+<p>設定完成後，按照頁面上的指示，複製這一段 code，貼到您想更動的位置就可以
+<img src="/files/2015-11-11/2015-11-11_17-04-14.png" alt="CC copy area" /></p>
+
+<h2>Octopress footer 更動</h2>
+
+<p>首先找到們要更動的頁面，我想要放置到 footer 位置，所以到 <em>source/_includes/footer.html</em> 查看一下內容</p>
+
+<pre><code class="html source/_includes/footer.html">include custom/footer.html
+</code></pre>
+
+<p>可以看出此頁面加入了 <em>custom/footer.html</em> 這個檔案，所以查看該檔案</p>
+
+<p>``` html custom/footer.html</p>
+
+<p>
+    Copyright &copy; 2015 - ShunNien Yu(Allen Yu) -
+    <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+
+<pre><code>
+把剛剛上述複製那段放進去，像以下這樣。
+</code></pre>
+
+<p>
+    <a rel="license" href="http://creativecommons.org/licenses/by/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by/4.0/88x31.png" /></a><br />This work is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a>.
+
+    Copyright &copy; 2015 - ShunNien Yu(Allen Yu) -
+    <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+
+<p>```</p>
+
+<p>最後記得先<code>rake preview</code>觀看一下，確認沒問題再行發布，然後記得版控。</p>
+
+<h2>參考資料</h2>
+
+<ul>
+<li><a href="http://creativecommons.org/">Creative Commons</a></li>
+<li><a href="http://creativecommons.tw/">台灣創用CC計畫</a></li>
+<li><a href="http://octopress.org/">Octopress</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress 設定 Search]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/11/octopress-she-ding-search/"/>
+    <updated>2015-11-11T10:16:22+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/11/octopress-she-ding-search</id>
+    <content type="html"><![CDATA[<h2>_config 設定</h2>
+
+<p>此部分需要注意 <strong>url</strong> 與 <strong>simple_search</strong>，這兩個資料設定，<strong>url</strong> 是您自己的部落格位址，<strong>simple_search</strong> 使用預設值就可以；這些是由 <a href="http://octopress.org/">Octopress</a> 提供的預設搜尋方式，是透過 google 直接搜尋 <strong>url</strong> 這設定值的網站，再查詢這網站裡面有包含查詢關鍵字的頁面。
+<img src="/files/2015-11-11/2015-11-11_15-13-17.png" alt="_config.yml setting" /></p>
+
+<h2>navigation.html</h2>
+
+<p>除非是想要自訂更動，不然使用預設的搜尋方式的話是不需要變動的，
+此檔案位置在 <em>/source/_includes/navigation.html</em>，需要自訂的話，需要變更 form tag 的部分，如下圖圈選區域。
+<img src="/files/2015-11-11/2015-11-11_15-40-25.png" alt="navigation.html" />
+這些動作都完成後，就可以進行<code>rake gen_deploy</code>了，就可以看到部落格可以搜尋了。</p>
+
+<h2>注意事項</h2>
+
+<p>當完成上述動作後，發現搜尋沒有結果，有可能是 google 尚未將您的網站登錄，這是 google 有 <a href="https://support.google.com/webmasters/answer/182072?hl=zh-Hant" title="Search Console說明:Googlebot">Googlebot</a> 會自動去搜尋網站登錄至 google 名單裡面；當然您也可以主動進行登錄，可由<a href="https://www.google.com/webmasters/tools/submit-url" title="Google 提交網站">google webmasters</a> 提交。
+提交完成後，可以在 google 搜尋進行搜尋檢查是否成功提交了，搜尋方式示範如下
+<code>
+site:yourUrl.github.io
+</code></p>
+
+<h2>參考資料</h2>
+
+<ul>
+<li><a href="http://octopress.org/">Octopress</a></li>
+<li><a href="https://www.google.com/webmasters/" title="Google 網站管理員">Google 網站管理員</a></li>
+<li><a href="https://support.google.com/webmasters/answer/182072?hl=zh-Hant" title="Search Console說明:Googlebot">Search Console說明:Googlebot</a></li>
+<li><a href="http://www.pkthink.com/knowledge-info.asp?id=4" title="耘想科技網頁設計:SEO 網站優化">耘想科技網頁設計:SEO 網站優化</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+  <entry>
+    <title type="html"><![CDATA[Octopress 加上 Github Pages 移動部落格到 Github]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/05/octopress-and-github-pages-move-blog-to-github/"/>
+    <updated>2015-11-05T03:12:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/05/octopress-and-github-pages-move-blog-to-github</id>
+    <content type="html"><![CDATA[<h2>我的環境</h2>
+
+<pre><code>$ systeminfo | findstr /B /C:"作業系統名稱" /C:"作業系統版本" /c:"作業系統設定" /c:"作業系統組建類型" /c:"系統類型" /c:"處理器" /c:"BIOS" /c:"實體記憶體總計" /c:"虛擬記憶體"
+
+作業系統名稱:         Microsoft Windows 10 專業版
+作業系統版本:         10.0.10240 N/A 組建 10240
+作業系統設定:         獨立工作站
+作業系統組建類型:     Multiprocessor Free
+系統類型:             x64-based PC
+處理器:               已安裝 1 處理器。
+BIOS 版本:            American Megatrends Inc. 219, 2015/5/4
+實體記憶體總計:       16,264 MB
+虛擬記憶體: 大小上限: 18,696 MB
+虛擬記憶體: 可用:     10,390 MB
+虛擬記憶體: 使用中:   8,306 MB
+</code></pre>
+
+<h2>安裝 <a href="http://octopress.org/">Octopress</a></h2>
+
+<h3>下載 <a href="https://github.com/imathis/octopress" title="Octopress Github">Octopress</a></h3>
+
+<p>請先到 <a href="https://github.com/imathis/octopress" title="Octopress Github">Github</a> 下載或是直接使用指令碼工具，透過指令進行，以下是使用 SSH
+<code>
+git clone git@github.com:imathis/octopress.git
+</code>
+要是使用 HTTPS 可以採用以下指令
+<code>
+git clone https://github.com/imathis/octopress.git
+</code>
+<img src="https://googledrive.com/host/0B24tdidnsV1vclY0V2JCMTFxems" alt="git clone result" /></p>
+
+<h3>安裝 Octopress</h3>
+
+<p>首先要安裝 <a href="http://octopress.org/">Octopress</a> 要透過 ruby，所以請先安裝 ruby，之後透過指令碼工具進行，首先進入剛剛 clone 下來的資料夾位置
+<code>
+cd octopress
+</code>
+接著透過 ruby 進行安裝
+<code>
+rake install
+</code>
+<img src="https://googledrive.com/host/0B24tdidnsV1vUkhETGpTemhsbnM" alt="Octoprss install result" />
+這樣就安裝完成了，可以使用<code>rake preview</code>指令在瀏覽器內觀看，這些指令都是在命令提示字元內執行喔。
+<img src="https://googledrive.com/host/0B24tdidnsV1vNDB0ZWp2UXZpN3c" alt="Octoprss preview" />
+<img src="https://googledrive.com/host/0B24tdidnsV1vb0dIQy0xV29uWjQ" alt="browser preview" />
+按下<code>Ctrl + C</code>可以終止執行</p>
+
+<h3>建立新的 Repository</h3>
+
+<p>沒有 <a href="https://github.com/">Github</a> 帳號的請先註冊喔，這邊都是預設已經擁有 Github 帳號。
+首先，先建立一個新的 Repository
+<img src="https://googledrive.com/host/0B24tdidnsV1vT1JMWHh5akRvY1k" alt="New Repository" />
+這個 Respository 的名稱必須是<code>yourGithubName.github.io</code>，yourGithubName 必須是您在 Github 上面的帳號名稱，然後建立此 Repository
+<img src="https://googledrive.com/host/0B24tdidnsV1vbmt0c0d0Z3FOUkU" alt="Repository name setting" />
+然後請不要關閉完成頁面，等下會用到新建立的 Repository SSH 位址(使用 HTTPS 位址也可以)
+<img src="https://googledrive.com/host/0B24tdidnsV1vUHFnQlBEM0ZERFE" alt="Repository SSH" /></p>
+
+<h3>自己電腦中的 Octopress 發佈(Deploy)到 <a href="https://pages.github.com/">Github Pages</a></h3>
+
+<p>繼續使用命令提示字元，必須在 octopress 資料夾下(您所 clone 的 octopress 位置)，執行以下指令
+<code>
+rake setup_github_pages
+</code>
+<img src="https://googledrive.com/host/0B24tdidnsV1vbk5mYVUzbWRhSW8" alt="setup_github_pages" />
+接著執行
+<code>
+rake generate
+</code>
+<img src="https://googledrive.com/host/0B24tdidnsV1vcVhGMWxVaVRETmc" alt="generate" /></p>
+
+<p>完成之後，就可以進行發佈的指令了
+<code>
+rake deploy
+</code>
+<img src="https://googledrive.com/host/0B24tdidnsV1vb052aGhYWEJWNmc" alt="deploy" /></p>
+
+<p>簡單說明一下，這幾個指令，按照字面應該可以猜得出來，generate 就是產生頁面，deploy 則是發佈出去，setup_github_pages 裡面包含許多設定，有興趣的可以參考 <a href="http://octopress.org/">Octopress</a> 的說明。發佈完成後，檢查一下網址 <code>http:yourGithubName.github.io/</code>，yourGithubName 就是你建立 Repository name
+<img src="https://googledrive.com/host/0B24tdidnsV1vR1ZxcTBITHFSN1k" alt="deploy browser preview" /></p>
+
+<p>最後，記得把原始檔案進行版控，放到 source branch 吧。
+<code>
+git add .
+git commit -m "您所要輸入的備註內容"
+git push origin source
+</code>
+<img src="https://googledrive.com/host/0B24tdidnsV1vTnRuOVBSWGU1U3c" alt="git to source" /></p>
+
+<p>這樣就完成您的部落格了，接著就可以使用 markdown 語法撰寫您的文章。</p>
+
+<h3>部落格設定</h3>
+
+<p>有兩個方式，一個是下指令，一個是直接更改 <em>config.yml 這個檔案，想經由指令進行更動的話，可以參考一下 Octopress 上面的 <a href="http://octopress.org/docs/configuring/">Configuring Octopress</a> 使用方式，以下說明在 octopress 資料夾下更改 </em>config.yml 檔案的的介紹(這樣更改感覺比較快速一點 XD)。
+首先先到您 clone octopress 路徑下，使用 sublimeText(或是notepad、記事本等其他文本編輯器都可以)開啟，然後直接修改，修改時，記得注意每一個冒號後都要空格，不然等下執行<code>rake generate</code>產生檔案時會發生錯誤，所以這點要注意。接著更動後記得存檔，並執行下列
+<code>
+rake generate
+rake deploy
+</code></p>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vN2gwY09CWkRMOU0" alt="edit _config.yml" /></p>
+
+<p>在執行 <code>rake deploy</code>時，我發生了 <em>LF will be replaced by CRLF</em> 這些錯誤，如果發生這個錯誤，可以試著執行以下指令，把 git 的 aurtocrlf 取消
+<code>
+git config --global core.autocrlf false
+</code></p>
+
+<h3>發表文章</h3>
+
+<p>此部分可以參考 <a href="http://octopress.org/docs/blogging/" title="Blogging Basics">Blogging Basics</a>，語法相當簡易，一樣使用指令碼
+<code>
+rake new_post["title"]
+</code>
+這時候 Octopress 會幫您產生文章檔案，此檔案會放到 <code>source/_posts/</code>這路徑底下，接著您可以使用習慣的文字編輯器，編輯這些文章，編輯結束想觀看文章在部落格上的呈現時，可以使用
+<code>
+rake preview
+</code>
+上述有提到這個指令的功能，此功能就是模擬一個 web 服務，讓您可以在本機端使用瀏覽器觀看執行結果；有寫過 web 開發的應該不會陌生，這就是本機測試。
+確認完成編輯後，進行 generate 產生需要的設定與檔案，之後發佈
+<code>
+rake generate
+rake deploy
+</code>
+這兩個語法可以合併使用以下指令，就是上述兩個指令的合併使用
+<code>
+rake gen_deploy
+</code></p>
+
+<p>差點忘了提醒，記得進行版控喔。</p>
+
+<h4>參考資料：</h4>
+
+<ul>
+<li><a href="http://wen00072-blog.logdown.com/posts/258497-octopress-installed-and-deployed-on-the-github-pages#oct-env" title="國王的耳朵是驢耳朵:安裝octopress並佈署到github pages上面">國王的耳朵是驢耳朵:安裝octopress並佈署到github pages上面</a></li>
+<li><a href="http://zerodie.github.io/blog/2012/01/19/octopress-github-pages/" title="李嘉玲的技術筆記:Github Page + Octopress">李嘉玲的技術筆記:Github Page + Octopress</a></li>
+<li><a href="http://shengmingzhiqing.com/blog/setup-octopress-with-github-pages.html/" title="生命之氢:Octopress 搭建流程 – Github Pages">生命之氢:Octopress 搭建流程 – Github Pages</a></li>
+<li><a href="http://octopress.org/">Octopress</a></li>
+<li><a href="https://pages.github.com/">Github Pages</a></li>
+<li><a href="http://octopress.org/docs/blogging/" title="Blogging Basics">Blogging Basics</a></li>
+<li><a href="http://octopress.org/docs/configuring/">Configuring Octopress</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

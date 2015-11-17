@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: asp.net Mvc 5 | ShunNien's Blog]]></title>
+  <link href="http://shunnien.github.io/blog/categories/asp-dot-net-mvc-5/atom.xml" rel="self"/>
+  <link href="http://shunnien.github.io/"/>
+  <updated>2015-11-17T16:11:30+08:00</updated>
+  <id>http://shunnien.github.io/</id>
+  <author>
+    <name><![CDATA[ShunNien Yu(Allen Yu)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[Visual Studio 2015 the ViewBag Doesn't Exist in the Current Context]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/13/the-viewbag-doesnt-exist-in-the-current-context/"/>
+    <updated>2015-11-13T21:13:41+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/13/the-viewbag-doesnt-exist-in-the-current-context</id>
+    <content type="html"><![CDATA[<h2>緣起</h2>
+
+<p>今日在操作系統的時候，發現系統不給進行下一個操作，想說怎麼回事？就趕快來查找一下紀錄。
+發現原來是新接手負責的人員，資料沒有照要求輸入(這完全不限制的輸入還是照著需求調整的，<del>真是自作孽</del>)，所以下一環節的處理直接就濾掉了。
+所以後來將此環節的處理放鬆並設定預設資料與例外處理，就把這問題處理掉。
+但是可能一陣子沒開 <strong>Visual Studio 2015</strong>，我的 cshtml 頁面，都會出現小紅線，仔細去看，都是
+<strong>The ViewBag doesn&rsquo;t exist in the current context</strong> 大概這樣的訊息，個人實在討厭這種紅色的訊息，所以還是想把它處理掉。</p>
+
+<h2>處理過程</h2>
+
+<p>印象中，以前 VS2012(Visual Studio 2012) 好像有處理過相同的問題，這一看就是 <strong>ASP.NET MVC</strong> 的元件引用有問題，可是查看 output 居然沒訊息 orz&hellip;。
+好吧，開個安全模式建立一個新 MVC 專案看看是不是那專案是不是有調整，使用指令碼開啟安全模式，記得要在 VS2015(Visual Studio 2015)執行檔的路徑下執行</p>
+
+<pre><code>devenv /safemode
+</code></pre>
+
+<p><img src="/files/2015-11-14/2015-11-14_00-40-50.png" alt="VS2015 safemode" /></p>
+
+<p>開啟結果，還是有紅色訊息。只好去 StackOverflow 找一下，發現了<a href="http://stackoverflow.com/questions/31232394/why-does-vs2015rc-says-the-viewbag-doesnt-exist-in-the-current-context-where" title="StackOverflow:Why does VS2015RC says “The ViewBag doesn't exist in the current context”, where as VS2013 says no errors?">Why does VS2015RC says&hellip;</a>(這名稱有點長，我就省略了)，可以在每個<code>.cshtml</code>檔案引用
+<code>
+@inherits System.Web.Mvc.WebViewPage&lt;dynamic&gt;
+</code></p>
+
+<p>引用後，的確紅線的提醒消失了，但是要每一頁去引用，簡直是無法想像呀，所以這方法果斷放棄。
+仔細想一想，要是我重新把 <strong>ASP.NET MVC</strong> 元件重新安裝，應該會好吧，可是不太想進行這動作，查詢了一下，看到<a href="http://bjkeizer.blogspot.tw/2015/01/the-name-viewbag-does-not-exist-in.html" title="sign me out:The name 'ViewBag' does not exist in the current context">這篇</a>說出解決方式是更新 MVC 元件或是修改 config，把 System.Web.Mvc 手動變更。
+原本我已經打算按照這方式進行了，但是後來看到<a href="http://stackoverflow.com/questions/31581666/visual-studio-2015-broken-razor-intellisense" title="StackOverflow:Visual Studio 2015 Broken Razor Intellisense">這篇</a>，抱持著我只進行這重設 userdata 的動作就好，結果我的 VS2015就好了
+<code>
+devenv.exe /resetuserdata
+</code></p>
+
+<h2>參考資料</h2>
+
+<ul>
+<li><a href="http://stackoverflow.com/questions/31232394/why-does-vs2015rc-says-the-viewbag-doesnt-exist-in-the-current-context-where" title="StackOverflow:Why does VS2015RC says “The ViewBag doesn't exist in the current context”, where as VS2013 says no errors?">StackOverflow:Why does VS2015RC says&hellip;</a></li>
+<li><a href="http://bjkeizer.blogspot.tw/2015/01/the-name-viewbag-does-not-exist-in.html" title="sign me out:The name 'ViewBag' does not exist in the current context">sign me out:The name &lsquo;ViewBag&rsquo; does not exist in the current context</a></li>
+<li><a href="http://stackoverflow.com/questions/31581666/visual-studio-2015-broken-razor-intellisense" title="StackOverflow:Visual Studio 2015 Broken Razor Intellisense">StackOverflow:Visual Studio 2015 Broken Razor Intellisense</a></li>
+<li><a href="http://www.asp.net/mvc/overview/releases/how-to-upgrade-an-aspnet-mvc-4-and-web-api-project-to-aspnet-mvc-5-and-web-api-2">The ASP.NET Site:How to Upgrade an ASP.NET MVC 4 &hellip; to ASP.NET MVC 5 &hellip;</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>

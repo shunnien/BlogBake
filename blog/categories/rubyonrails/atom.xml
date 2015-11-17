@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+
+  <title><![CDATA[Category: Rubyonrails | ShunNien's Blog]]></title>
+  <link href="http://shunnien.github.io/blog/categories/rubyonrails/atom.xml" rel="self"/>
+  <link href="http://shunnien.github.io/"/>
+  <updated>2015-11-17T16:11:30+08:00</updated>
+  <id>http://shunnien.github.io/</id>
+  <author>
+    <name><![CDATA[ShunNien Yu(Allen Yu)]]></name>
+    
+  </author>
+  <generator uri="http://octopress.org/">Octopress</generator>
+
+  
+  <entry>
+    <title type="html"><![CDATA[在 Windows 安裝 Ruby on Rails]]></title>
+    <link href="http://shunnien.github.io/blog/2015/11/05/in-windwos-install-ruby-on-rails/"/>
+    <updated>2015-11-05T03:10:00+08:00</updated>
+    <id>http://shunnien.github.io/blog/2015/11/05/in-windwos-install-ruby-on-rails</id>
+    <content type="html"><![CDATA[<h2>緣起</h2>
+
+<p>在 Windows 平台上很久了，今年初為了裝一些套件，就安裝了 Ruby，結果今年都快過完了都沒去玩過，只是為了那些套件安裝順利就裝了 ruby，感覺很浪費呀，所以再裝 Rails 進來玩玩，順手記錄一下安裝的過程，為了記錄，我又重新安裝一次 ruby XD。</p>
+
+<h2>下載安裝檔案 <a href="https://www.ruby-lang.org/zh_tw/" title="Ruby Programming Language">Ruby</a></h2>
+
+<p>首先到<a href="http://rubyinstaller.org/downloads/">RubyInstaller</a>下載安裝檔案，請依照下圖指示進行。
+<img src="https://googledrive.com/host/0B24tdidnsV1vLU4yOXk5RzFGbkk" alt="RubyInstaller Index" />
+到這頁面選擇符合您自己系統的版本，以下是我的安裝版本
+<img src="https://googledrive.com/host/0B24tdidnsV1vYlhqZjJoaXNUcDQ" alt="RubyInstaller Select Version" />
+然後順便下載 DevKit，一樣選擇適合自己的版本，我是選擇 <strong>For use with Ruby 2.0 and above (x64 - 64bits only)</strong>這版本
+<img src="https://googledrive.com/host/0B24tdidnsV1vN2VCZk5ITkI1OEU" alt="Ruby DevKit" /></p>
+
+<h2>安裝 RubyInstaller</h2>
+
+<p>執行剛剛下載的 <strong>RubyInstaller</strong>
+<img src="https://googledrive.com/host/0B24tdidnsV1vd0ZMaGtCa2lUT2c" alt="RubyInstaller Install" />
+勾選接受這<strong> License</strong>
+<img src="https://googledrive.com/host/0B24tdidnsV1vWUVXNUFFbVdOd1E" alt="License" />
+選擇您想要安裝的路徑並勾選 <strong>Add Ruby executables to your PATH</strong> 這個選項，這樣安裝程式會自動設定環境變數，等下就可以直接在指令列上執行。
+<img src="https://googledrive.com/host/0B24tdidnsV1vWUVXNUFFbVdOd1E" alt="Destination" />
+然後稍微等個幾秒
+<img src="https://googledrive.com/host/0B24tdidnsV1vR0dxTFpjSTdOMVk" alt="Installing" />
+就可以看到安裝完成畫面
+<img src="https://googledrive.com/host/0B24tdidnsV1vcW40VFJXelBaWVk" alt="Completing" />
+接著我們開啟命令提示字元，或是<code>Win + R</code>輸入<code>cmd</code>，我以下畫面是使用 <a href="http://blog.miniasp.com/post/2015/09/28/Useful-tool-Cmder.aspx">cmder</a>，畫面看起來不太一樣，但是功能是相同的；命令提示字元開啟後，鍵入<code>ruby -v</code>查看一下 ruby 安裝的版本，應該會是如下圖顯示。
+<img src="https://googledrive.com/host/0B24tdidnsV1vUUZnTVNoN1lGME0" alt="Version Check Success" />
+如果出現[<em>不是內部或外部命令、可執行的程式或批次檔。</em>]這訊息，如下圖所示。
+<img src="https://googledrive.com/host/0B24tdidnsV1vd19vMmZSRm5yTlE" alt="Version Check Failure" />
+可能是剛剛沒有勾選 <strong>Add Ruby executables to your PATH</strong>造成，您可能必須手動設定環境變數，需要進入控制台->系統->進階系統設定->進階->環境變數->系統變數->找尋 <strong>Path</strong> 路徑->編輯，把您的 ruby 安裝路徑增加進去
+<img src="https://googledrive.com/host/0B24tdidnsV1vd1psdVRFajlZME0" alt="Set Path" /></p>
+
+<h2>安裝 DevKit</h2>
+
+<p>執行 DevKit-mingw64-64-4.7.2-20130224-1432-sfx.exe，這檔名超長，選擇您想放置的位置，建議放到<code>C:\RubyDevKit</code>
+<img src="https://googledrive.com/host/0B24tdidnsV1vdERtRi1jUkdtLTA" alt="Set DevKit Path" /></p>
+
+<p>如果都是按照上述建議的話，到<code>C:\RubyDevKit</code>資料夾下(您所解壓縮的位置下)<code>Ctrl + shift + mouse right click</code>選擇開啟命令視窗</p>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vVDBKY1pEa29pVkk" alt="手動設定" /></p>
+
+<p>執行<code>ruby dk.rb init</code>，這指令會產生<strong>config.yml</strong>這檔案，並且會偵測您 ruby 安裝的路徑，直接寫入到 config.yml 檔案中
+<img src="https://googledrive.com/host/0B24tdidnsV1vU2drbjUzZzUyRlU" alt="執行 ruby dk.rb init" /></p>
+
+<p>假如沒有偵測到您的安裝路徑，請手動更改 config.yml 這檔案，用記事本就可以開啟這檔案，按照下圖修改，請修改為您所安裝的路徑，注意路徑語法是<code>- C:/yourRubyPath</code>前面有個小破折號
+<img src="https://googledrive.com/host/0B24tdidnsV1vQXd0aTdvU0RwX0k" alt="設定 Ruby路徑" /></p>
+
+<p>然後執行以下命令，它會更動您 ruby 安裝路徑下的檔案或產生檔案
+<code>
+ruby dk.rb install
+</code>
+<img src="https://googledrive.com/host/0B24tdidnsV1vVkVHQ0VFT0dUcXM" alt="DevKit Install" /></p>
+
+<h2>安裝 Rails</h2>
+
+<p>接下來使用<code>gem</code>來安裝，所以下指令就可以安裝完成了，直接下指令安裝 rails
+<code>
+gem install rails --no-ri --no-rdoc
+</code>
+安裝完成後，測試一下，看一下 rails 版本編號
+<code>
+rails -v
+</code>
+出現表示安裝完成了。終於弄完這篇文章了，明明裝的時候很快，弄成文章花了不少時間。</p>
+
+<h2>My Environment</h2>
+
+<ul>
+<li>OS:Win 10</li>
+</ul>
+
+
+<h2>Reference</h2>
+
+<ul>
+<li><a href="http://rubyinstaller.org/downloads/">RubyInstaller</a></li>
+<li><a href="https://www.ruby-lang.org/zh_tw/" title="Ruby Programming Language">Ruby Programming Language</a></li>
+</ul>
+
+]]></content>
+  </entry>
+  
+</feed>
