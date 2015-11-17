@@ -1,0 +1,409 @@
+
+<!DOCTYPE html>
+<!--[if IEMobile 7 ]><html class="no-js iem7"><![endif]-->
+<!--[if lt IE 9]><html class="no-js lte-ie8"><![endif]-->
+<!--[if (gt IE 8)|(gt IEMobile 7)|!(IEMobile)|!(IE)]><!--><html class="no-js" lang="en"><!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>JavaScript to Json 基本觀念 - ShunNien's Blog</title>
+  <meta name="author" content="ShunNien Yu(Allen Yu)">
+
+  
+  <meta name="description" content="緣起 有個朋友詢問我angular.toJson這 function為什麼不能轉換到Json，他只是把他的angularJS 更換到 1.4.7 版本。
+經過了解後，才知道他對於JavaScript一些觀念不是相當清楚，至於他的問題也不是angularJS的問題，是他套用的某一個對岸套件影響的， &hellip;">
+  
+
+  <!-- http://t.co/dKP3o1e -->
+  <meta name="HandheldFriendly" content="True">
+  <meta name="MobileOptimized" content="320">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  
+  <link rel="canonical" href="http://shunnien.github.io/blog/2015/11/17/javascript-to-json-ji-ben-guan-nian/">
+  <link href="/favicon.png" rel="icon">
+  <link href="/stylesheets/screen.css" media="screen, projection" rel="stylesheet" type="text/css">
+  <link href="/atom.xml" rel="alternate" title="ShunNien's Blog" type="application/atom+xml">
+  <script src="/javascripts/modernizr-2.0.js"></script>
+  <script src="//ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script>!window.jQuery && document.write(unescape('%3Cscript src="/javascripts/libs/jquery.min.js"%3E%3C/script%3E'))</script>
+  <script src="/javascripts/octopress.js" type="text/javascript"></script>
+  <!--Fonts from Google"s Web font directory at http://google.com/webfonts -->
+<link href="//fonts.googleapis.com/css?family=PT+Serif:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+<link href="//fonts.googleapis.com/css?family=PT+Sans:regular,italic,bold,bolditalic" rel="stylesheet" type="text/css">
+
+  
+  <script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-62183976-3']);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+      var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+      ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+      var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+  </script>
+
+
+</head>
+
+<body   >
+  <header role="banner"><hgroup>
+  <h1><a href="/">ShunNien's Blog</a></h1>
+  
+    <h2>不積跬步，無以致千里；不積小流，無以成江海。</h2>
+  
+</hgroup>
+
+</header>
+  <nav role="navigation"><ul class="subscription" data-subscription="rss">
+  <li><a href="/atom.xml" rel="subscribe-rss" title="subscribe via RSS">RSS</a></li>
+  
+</ul>
+  
+<form action="https://www.google.com/search" method="get">
+  <fieldset role="search">
+    <input type="hidden" name="sitesearch" value="shunnien.github.io">
+    <input class="search" type="text" name="q" results="0" placeholder="Search"/>
+  </fieldset>
+</form>
+  
+<ul class="main-navigation">
+  <li><a href="/">Blog</a></li>
+  <li><a href="/blog/archives">Archives</a></li>
+  <li><a href="/categories/">Categories</a></li>
+</ul>
+
+</nav>
+  <div id="main">
+    <div id="content">
+      <div>
+<article class="hentry" role="article">
+  
+  <header>
+    
+      <h1 class="entry-title">JavaScript to Json 基本觀念</h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-11-17T16:31:15+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>4:31 pm</span></time>
+        
+           | <a href="#disqus_thread"
+             data-disqus-identifier="http://shunnien.github.io">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+<div class="entry-content"><h2>緣起</h2>
+
+<p>有個朋友詢問我<code>angular.toJson</code>這 function為什麼不能轉換到<a href="http://www.json.org/" title="Json">Json</a>，他只是把他的<a href="https://angularjs.org/" title="AngularJS">angularJS</a> 更換到 1.4.7 版本。
+經過了解後，才知道他對於<a href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript" title="MDN:JavaScript">JavaScript</a>一些觀念不是相當清楚，至於他的問題也不是<a href="https://angularjs.org/" title="AngularJS">angularJS</a>的問題，是他套用的某一個對岸套件影響的，所以他才一直以為錯誤的使用方式是可行的 xd。</p>
+
+<h2>Angular JS 部分</h2>
+
+<p>一開始想說會不會是更新<a href="https://angularjs.org/" title="AngularJS">angularJs</a>的關係，所以就查看了一下 1.4.7 的<a href="https://github.com/angular/angular.js/blob/master/src/Angular.js#L1164" title="Github:angularJs">source code</a></p>
+
+<figure class='code'><figcaption><span>toJson</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * @ngdoc function</span>
+</span><span class='line'><span class="cm"> * @name angular.toJson</span>
+</span><span class='line'><span class="cm"> * @module ng</span>
+</span><span class='line'><span class="cm"> * @kind function</span>
+</span><span class='line'><span class="cm"> *</span>
+</span><span class='line'><span class="cm"> * @description</span>
+</span><span class='line'><span class="cm"> * Serializes input into a JSON-formatted string. Properties with leading $$ characters will be</span>
+</span><span class='line'><span class="cm"> * stripped since angular uses this notation internally.</span>
+</span><span class='line'><span class="cm"> *</span>
+</span><span class='line'><span class="cm"> * @param {Object|Array|Date|string|number} obj Input to be serialized into JSON.</span>
+</span><span class='line'><span class="cm"> * @param {boolean|number} [pretty=2] If set to true, the JSON output will contain newlines and whitespace.</span>
+</span><span class='line'><span class="cm"> *    If set to an integer, the JSON output will contain that many spaces per indentation.</span>
+</span><span class='line'><span class="cm"> * @returns {string|undefined} JSON-ified string representing `obj`.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">toJson</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">pretty</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">obj</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="kc">undefined</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">pretty</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">pretty</span> <span class="o">=</span> <span class="nx">pretty</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">toJsonReplacer</span><span class="p">,</span> <span class="nx">pretty</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>結果發現這段轉換很久沒更動過了，最後一次更改還是 2014/2/15(想查看的，自己在 NG github 切換到 Blame 查看)，而且仔細看看這 function 內容，還是使用<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" title="MDN:JSON.stringify()">JSON.stringify</a>這函式。</p>
+
+<h3><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" title="MDN:JSON.stringify()">JSON.stringify</a></h3>
+
+<p>再看一次<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" title="MDN:JSON.stringify()">JSON.stringify</a>這函式的意義</p>
+
+<blockquote><p>The JSON.stringify() method converts a JavaScript value to a JSON string, optionally replacing values if a replacer function is specified, or optionally including only the specified properties if a replacer array is specified.</p></blockquote>
+
+<p>清楚明白的寫著可以將<a href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript" title="MDN:JavaScript">JavaScript</a>值序列化成<a href="http://www.w3schools.com/js/js_json.asp" title="w3schools:JavaScript JSON">JSON</a></p>
+
+<h2>範例對比</h2>
+
+<figure class='code'><figcaption><span>錯誤用法</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='JavaScript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span> <span class="o">=</span> <span class="s2">&quot;new property&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">baz</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">jsonString</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">foo</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>jsonString 會輸出 <code>[]</code></p>
+
+<p><img src="/files/2015-11-17/2015-11-17_17-22-26.png" alt="error sample" /></p>
+
+<figure class='code'><figcaption><span>正確用法</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='JavaScript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span> <span class="o">=</span> <span class="s2">&quot;new property&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">baz</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">jsonString</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">foo</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>jsonString 會輸出 <code>"{\"bar\":\"new property\",\"baz\":3}"</code></p>
+
+<p><img src="/files/2015-11-17/2015-11-17_17-23-16.png" alt="sample" /></p>
+
+<h2>說明</h2>
+
+<p>兩個範例的差別主要在<code>foo</code>一個是 array，一個是 object，所以在宣告完<code>var foo</code>之後，以下這兩個動作</p>
+
+<figure class='code'><figcaption><span>正確用法</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='JavaScript'><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span> <span class="o">=</span> <span class="s2">&quot;new property&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">baz</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在 array 的範例中，是指定 foo 的屬性，但是該 foo 的值為 []。
+在 object 的例子，則是 foo 的值就是一個物件，且<code>bar</code>與<code>baz</code>都設定是該物件的屬性。
+而<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" title="MDN:JSON.stringify()">JSON.stringify</a>是轉換值為<a href="http://www.json.org/" title="Json">Json</a>，所以一個是 <strong>[]</strong>，一個是屬性資料。</p>
+
+<h2>參考資料</h2>
+
+<ul>
+<li>MDN:<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" title="MDN:JSON.stringify()">json.stringify()</a></li>
+<li>w3schools:<a href="http://www.w3schools.com/js/js_json.asp" title="w3schools:JavaScript JSON">JavaScript JSON</a></li>
+<li>AngularJS:<a href="https://docs.angularjs.org/api/ng/function/angular.toJson" title="AngularJS:angular.toJson">angular.toJson</a></li>
+<li>Github:<a href="https://github.com/angular/angular.js/blob/master/src/Angular.js#L1164" title="Github:angularJs">Angular.Js Source Code</a></li>
+</ul>
+
+</div>
+
+
+  <footer>
+    <p class="meta">
+      
+  
+
+<span class="byline author vcard">Posted by <span class="fn">ShunNien Yu(Allen Yu)</span></span>
+
+      
+
+
+
+
+<time class='entry-date' datetime='2015-11-17T16:31:15+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>4:31 pm</span></time>
+      
+
+
+    </p>
+    
+      <div class="sharing">
+  
+  <a href="//twitter.com/share" class="twitter-share-button" data-url="http://shunnien.github.io/blog/2015/11/17/javascript-to-json-ji-ben-guan-nian/" data-via="" data-counturl="http://shunnien.github.io/blog/2015/11/17/javascript-to-json-ji-ben-guan-nian/" >Tweet</a>
+  
+  
+  
+    <div class="fb-like" data-send="true" data-width="450" data-show-faces="false"></div>
+  
+</div>
+
+    
+    <p class="meta">
+      
+        <a class="basic-alignment left" href="/blog/2015/11/13/the-viewbag-doesnt-exist-in-the-current-context/" title="Previous Post: Visual Studio 2015 The ViewBag doesn't exist in the current context">&laquo; Visual Studio 2015 The ViewBag doesn't exist in the current context</a>
+      
+      
+    </p>
+  </footer>
+</article>
+
+  <section>
+    <h1>Comments</h1>
+    <div id="disqus_thread" aria-live="polite"><noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+</div>
+  </section>
+
+</div>
+
+<aside class="sidebar">
+  
+    <section>
+  <h1>Recent Posts</h1>
+  <ul id="recent_posts">
+    
+      <li class="post">
+        <a href="/blog/2015/11/17/javascript-to-json-ji-ben-guan-nian/">JavaScript to Json 基本觀念</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/11/13/the-viewbag-doesnt-exist-in-the-current-context/">Visual Studio 2015 the ViewBag Doesn't Exist in the Current Context</a>
+      </li>
+    
+      <li class="post">
+        <a href="/blog/2015/11/12/octopress-jia-ru-category-fen-lei/">Octopress 加入 Category(分類)</a>
+      </li>
+    
+  </ul>
+</section>
+<section>
+  <h1>Top Categories</h1>
+    <ul id="top-category-list"><li><a href='/blog/categories/blog'>blog (4)</a></li><li><a href='/blog/categories/octopress'>octopress (4)</a></li><li><a href='/blog/categories/linq'>linq (1)</a></li><li><a href='/blog/categories/github'>github (1)</a></li><li><a href='/blog/categories/asp-dot-net-mvc-5'>asp.net mvc 5 (1)</a></li><li><a href='/blog/categories/windows10'>windows10 (1)</a></li></ul>
+</section><section>
+  <h1>Tag Cloud</h1>
+    <span id="tag-cloud"><a href='/blog/categories/asp-dot-net-mvc-5' style='font-size: 115.0%'>asp.net mvc 5</a> <a href='/blog/categories/blog' style='font-size: 160.0%'>blog</a> <a href='/blog/categories/c-number' style='font-size: 115.0%'>c#</a> <a href='/blog/categories/github' style='font-size: 115.0%'>github</a> <a href='/blog/categories/google' style='font-size: 115.0%'>google</a> <a href='/blog/categories/iis7-dot-5' style='font-size: 115.0%'>iis7.5</a> <a href='/blog/categories/linq' style='font-size: 115.0%'>linq</a> <a href='/blog/categories/npm' style='font-size: 115.0%'>npm</a> <a href='/blog/categories/octopress' style='font-size: 160.0%'>octopress</a> <a href='/blog/categories/rubyonrails' style='font-size: 115.0%'>rubyonrails</a> <a href='/blog/categories/sql' style='font-size: 115.0%'>sql</a> <a href='/blog/categories/sqlserver' style='font-size: 115.0%'>sqlserver</a> <a href='/blog/categories/visual-studio-2015' style='font-size: 115.0%'>visual studio 2015</a> <a href='/blog/categories/windows10' style='font-size: 115.0%'>windows10</a> <a href='/blog/categories/windwos' style='font-size: 115.0%'>windwos</a> </span>
+</section><section>
+  <h1>Categories</h1>
+    <ul id="category-list"><li><a href='/blog/categories/asp-dot-net-mvc-5'>asp.net mvc 5 (1)</a></li><li><a href='/blog/categories/blog'>blog (4)</a></li><li><a href='/blog/categories/c-number'>c# (1)</a></li><li><a href='/blog/categories/github'>github (1)</a></li><li><a href='/blog/categories/google'>google (1)</a></li><li><a href='/blog/categories/iis7-dot-5'>iis7.5 (1)</a></li><li><a href='/blog/categories/linq'>linq (1)</a></li><li><a href='/blog/categories/npm'>npm (1)</a></li><li><a href='/blog/categories/octopress'>octopress (4)</a></li><li><a href='/blog/categories/rubyonrails'>rubyonrails (1)</a></li><li><a href='/blog/categories/sql'>sql (1)</a></li><li><a href='/blog/categories/sqlserver'>sqlserver (1)</a></li><li><a href='/blog/categories/visual-studio-2015'>visual studio 2015 (1)</a></li><li><a href='/blog/categories/windows10'>windows10 (1)</a></li><li><a href='/blog/categories/windwos'>windwos (1)</a></li></ul>
+</section>
+<section>
+  <h1>GitHub Repos</h1>
+  <ul id="gh_repos">
+    <li class="loading">Status updating...</li>
+  </ul>
+  
+  <a href="https://github.com/shunnien">@shunnien</a> on GitHub
+  
+  <script type="text/javascript">
+    $(document).ready(function(){
+        if (!window.jXHR){
+            var jxhr = document.createElement('script');
+            jxhr.type = 'text/javascript';
+            jxhr.src = '/javascripts/libs/jXHR.js';
+            var s = document.getElementsByTagName('script')[0];
+            s.parentNode.insertBefore(jxhr, s);
+        }
+
+        github.showRepos({
+            user: 'shunnien',
+            count: 0,
+            skip_forks: true,
+            target: '#gh_repos'
+        });
+    });
+  </script>
+  <script src="/javascripts/github.js" type="text/javascript"> </script>
+</section>
+
+
+<section class="googleplus">
+  <h1>
+    <a href="https://plus.google.com/113838943770679866520?rel=author">
+      <img src="http://www.google.com/images/icons/ui/gprofile_button-32.png" width="32" height="32">
+      Google+
+    </a>
+  </h1>
+</section>
+
+
+
+  
+</aside>
+
+
+    </div>
+  </div>
+  <footer role="contentinfo"><p>
+    <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="創用 CC 授權條款" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a>
+    <br />本著作由
+    <a xmlns:cc="http://creativecommons.org/ns#" href="shunnien.github.io" property="cc:attributionName" rel="cc:attributionURL">ShunNien Yu</a>製作，以<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">創用CC 姓名標示-非商業性 4.0 國際 授權條款</a>釋出。
+    <br />Copyright &copy; 2015 - ShunNien Yu(Allen Yu) -
+    <span class="credit">Powered by <a href="http://octopress.org">Octopress</a></span>
+</p>
+
+</footer>
+  
+
+<script type="text/javascript">
+      var disqus_shortname = 'shunniengithubblog';
+      
+        
+        // var disqus_developer = 1;
+        var disqus_identifier = 'http://shunnien.github.io/blog/2015/11/17/javascript-to-json-ji-ben-guan-nian/';
+        var disqus_url = 'http://shunnien.github.io/blog/2015/11/17/javascript-to-json-ji-ben-guan-nian/';
+        var disqus_script = 'embed.js';
+      
+    (function () {
+      var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+      dsq.src = '//' + disqus_shortname + '.disqus.com/' + disqus_script;
+      (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    }());
+</script>
+
+
+
+<div id="fb-root"></div>
+<script>(function(d, s, id) {
+  var js, fjs = d.getElementsByTagName(s)[0];
+  if (d.getElementById(id)) {return;}
+  js = d.createElement(s); js.id = id; js.async = true;
+  js.src = "//connect.facebook.net/en_US/all.js#appId=212934732101925&xfbml=1";
+  fjs.parentNode.insertBefore(js, fjs);
+}(document, 'script', 'facebook-jssdk'));</script>
+
+
+
+
+
+  <script type="text/javascript">
+    (function(){
+      var twitterWidgets = document.createElement('script');
+      twitterWidgets.type = 'text/javascript';
+      twitterWidgets.async = true;
+      twitterWidgets.src = '//platform.twitter.com/widgets.js';
+      document.getElementsByTagName('head')[0].appendChild(twitterWidgets);
+    })();
+  </script>
+
+
+
+
+
+</body>
+</html>

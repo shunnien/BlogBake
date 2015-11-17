@@ -9,9 +9,8 @@
   <meta name="author" content="ShunNien Yu(Allen Yu)">
 
   
-  <meta name="description" content="緣起 今日在操作系統的時候，發現系統不給進行下一個操作，想說怎麼回事？就趕快來查找一下紀錄。
-發現原來是新接手負責的人員，資料沒有照要求輸入(這完全不限制的輸入還是照著需求調整的，真是自作孽)，所以下一環節的處理直接就濾掉了。
-所以後來將此環節的處理放鬆並設定預設資料與例外處理，就把這問題處理掉 &hellip;">
+  <meta name="description" content="緣起 有個朋友詢問我angular.toJson這 function為什麼不能轉換到Json，他只是把他的angularJS 更換到 1.4.7 版本。
+經過了解後，才知道他對於JavaScript一些觀念不是相當清楚，至於他的問題也不是angularJS的問題，是他套用的某一個對岸套件影響的， &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -80,6 +79,159 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/11/17/javascript-to-json-ji-ben-guan-nian/">JavaScript to Json 基本觀念</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-11-17T16:31:15+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>17</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>4:31 pm</span></time>
+        
+           | <a href="/blog/2015/11/17/javascript-to-json-ji-ben-guan-nian/#disqus_thread"
+             data-disqus-identifier="http://shunnien.github.io/blog/2015/11/17/javascript-to-json-ji-ben-guan-nian/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>緣起</h2>
+
+<p>有個朋友詢問我<code>angular.toJson</code>這 function為什麼不能轉換到<a href="http://www.json.org/" title="Json">Json</a>，他只是把他的<a href="https://angularjs.org/" title="AngularJS">angularJS</a> 更換到 1.4.7 版本。
+經過了解後，才知道他對於<a href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript" title="MDN:JavaScript">JavaScript</a>一些觀念不是相當清楚，至於他的問題也不是<a href="https://angularjs.org/" title="AngularJS">angularJS</a>的問題，是他套用的某一個對岸套件影響的，所以他才一直以為錯誤的使用方式是可行的 xd。</p>
+
+<h2>Angular JS 部分</h2>
+
+<p>一開始想說會不會是更新<a href="https://angularjs.org/" title="AngularJS">angularJs</a>的關係，所以就查看了一下 1.4.7 的<a href="https://github.com/angular/angular.js/blob/master/src/Angular.js#L1164" title="Github:angularJs">source code</a></p>
+
+<figure class='code'><figcaption><span>toJson</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+<span class='line-number'>5</span>
+<span class='line-number'>6</span>
+<span class='line-number'>7</span>
+<span class='line-number'>8</span>
+<span class='line-number'>9</span>
+<span class='line-number'>10</span>
+<span class='line-number'>11</span>
+<span class='line-number'>12</span>
+<span class='line-number'>13</span>
+<span class='line-number'>14</span>
+<span class='line-number'>15</span>
+<span class='line-number'>16</span>
+<span class='line-number'>17</span>
+<span class='line-number'>18</span>
+<span class='line-number'>19</span>
+<span class='line-number'>20</span>
+<span class='line-number'>21</span>
+<span class='line-number'>22</span>
+</pre></td><td class='code'><pre><code class='javascript'><span class='line'><span class="cm">/**</span>
+</span><span class='line'><span class="cm"> * @ngdoc function</span>
+</span><span class='line'><span class="cm"> * @name angular.toJson</span>
+</span><span class='line'><span class="cm"> * @module ng</span>
+</span><span class='line'><span class="cm"> * @kind function</span>
+</span><span class='line'><span class="cm"> *</span>
+</span><span class='line'><span class="cm"> * @description</span>
+</span><span class='line'><span class="cm"> * Serializes input into a JSON-formatted string. Properties with leading $$ characters will be</span>
+</span><span class='line'><span class="cm"> * stripped since angular uses this notation internally.</span>
+</span><span class='line'><span class="cm"> *</span>
+</span><span class='line'><span class="cm"> * @param {Object|Array|Date|string|number} obj Input to be serialized into JSON.</span>
+</span><span class='line'><span class="cm"> * @param {boolean|number} [pretty=2] If set to true, the JSON output will contain newlines and whitespace.</span>
+</span><span class='line'><span class="cm"> *    If set to an integer, the JSON output will contain that many spaces per indentation.</span>
+</span><span class='line'><span class="cm"> * @returns {string|undefined} JSON-ified string representing `obj`.</span>
+</span><span class='line'><span class="cm"> */</span>
+</span><span class='line'><span class="kd">function</span> <span class="nx">toJson</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">pretty</span><span class="p">)</span> <span class="p">{</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="k">typeof</span> <span class="nx">obj</span> <span class="o">===</span> <span class="s1">&#39;undefined&#39;</span><span class="p">)</span> <span class="k">return</span> <span class="kc">undefined</span><span class="p">;</span>
+</span><span class='line'>  <span class="k">if</span> <span class="p">(</span><span class="o">!</span><span class="nx">isNumber</span><span class="p">(</span><span class="nx">pretty</span><span class="p">))</span> <span class="p">{</span>
+</span><span class='line'>    <span class="nx">pretty</span> <span class="o">=</span> <span class="nx">pretty</span> <span class="o">?</span> <span class="mi">2</span> <span class="o">:</span> <span class="kc">null</span><span class="p">;</span>
+</span><span class='line'>  <span class="p">}</span>
+</span><span class='line'>  <span class="k">return</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">obj</span><span class="p">,</span> <span class="nx">toJsonReplacer</span><span class="p">,</span> <span class="nx">pretty</span><span class="p">);</span>
+</span><span class='line'><span class="p">}</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>結果發現這段轉換很久沒更動過了，最後一次更改還是 2014/2/15(想查看的，自己在 NG github 切換到 Blame 查看)，而且仔細看看這 function 內容，還是使用<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" title="MDN:JSON.stringify()">JSON.stringify</a>這函式。</p>
+
+<h3><a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" title="MDN:JSON.stringify()">JSON.stringify</a></h3>
+
+<p>再看一次<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" title="MDN:JSON.stringify()">JSON.stringify</a>這函式的意義</p>
+
+<blockquote><p>The JSON.stringify() method converts a JavaScript value to a JSON string, optionally replacing values if a replacer function is specified, or optionally including only the specified properties if a replacer array is specified.</p></blockquote>
+
+<p>清楚明白的寫著可以將<a href="https://developer.mozilla.org/zh-TW/docs/Web/JavaScript" title="MDN:JavaScript">JavaScript</a>值序列化成<a href="http://www.w3schools.com/js/js_json.asp" title="w3schools:JavaScript JSON">JSON</a></p>
+
+<h2>範例對比</h2>
+
+<figure class='code'><figcaption><span>錯誤用法</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='JavaScript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="p">[];</span>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span> <span class="o">=</span> <span class="s2">&quot;new property&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">baz</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">jsonString</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">foo</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>jsonString 會輸出 <code>[]</code></p>
+
+<p><img src="/files/2015-11-17/2015-11-17_17-22-26.png" alt="error sample" /></p>
+
+<figure class='code'><figcaption><span>正確用法</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+<span class='line-number'>3</span>
+<span class='line-number'>4</span>
+</pre></td><td class='code'><pre><code class='JavaScript'><span class='line'><span class="kd">var</span> <span class="nx">foo</span> <span class="o">=</span> <span class="p">{};</span>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span> <span class="o">=</span> <span class="s2">&quot;new property&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">baz</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</span><span class='line'><span class="kd">var</span> <span class="nx">jsonString</span> <span class="o">=</span> <span class="nx">JSON</span><span class="p">.</span><span class="nx">stringify</span><span class="p">(</span><span class="nx">foo</span><span class="p">);</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>jsonString 會輸出 <code>"{\"bar\":\"new property\",\"baz\":3}"</code></p>
+
+<p><img src="/files/2015-11-17/2015-11-17_17-23-16.png" alt="sample" /></p>
+
+<h2>說明</h2>
+
+<p>兩個範例的差別主要在<code>foo</code>一個是 array，一個是 object，所以在宣告完<code>var foo</code>之後，以下這兩個動作</p>
+
+<figure class='code'><figcaption><span>正確用法</span></figcaption><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+<span class='line-number'>2</span>
+</pre></td><td class='code'><pre><code class='JavaScript'><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">bar</span> <span class="o">=</span> <span class="s2">&quot;new property&quot;</span><span class="p">;</span>
+</span><span class='line'><span class="nx">foo</span><span class="p">.</span><span class="nx">baz</span> <span class="o">=</span> <span class="mi">3</span><span class="p">;</span>
+</span></code></pre></td></tr></table></div></figure>
+
+
+<p>在 array 的範例中，是指定 foo 的屬性，但是該 foo 的值為 []。
+在 object 的例子，則是 foo 的值就是一個物件，且<code>bar</code>與<code>baz</code>都設定是該物件的屬性。
+而<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" title="MDN:JSON.stringify()">JSON.stringify</a>是轉換值為<a href="http://www.json.org/" title="Json">Json</a>，所以一個是 <strong>[]</strong>，一個是屬性資料。</p>
+
+<h2>參考資料</h2>
+
+<ul>
+<li>MDN:<a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify" title="MDN:JSON.stringify()">json.stringify()</a></li>
+<li>w3schools:<a href="http://www.w3schools.com/js/js_json.asp" title="w3schools:JavaScript JSON">JavaScript JSON</a></li>
+<li>AngularJS:<a href="https://docs.angularjs.org/api/ng/function/angular.toJson" title="AngularJS:angular.toJson">angular.toJson</a></li>
+<li>Github:<a href="https://github.com/angular/angular.js/blob/master/src/Angular.js#L1164" title="Github:angularJs">Angular.Js Source Code</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -334,7 +486,7 @@
 <span class='line-number'>3</span>
 <span class='line-number'>4</span>
 </pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;p&gt;</span>
-</span><span class='line'>    Copyright <span class="ni">&amp;copy;</span> 2015-11-17 16:28:28 +0800 - ShunNien Yu(Allen Yu) -
+</span><span class='line'>    Copyright <span class="ni">&amp;copy;</span> 2015-11-17 17:46:19 +0800 - ShunNien Yu(Allen Yu) -
 </span><span class='line'>    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;credit&quot;</span><span class="nt">&gt;</span>Powered by <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;http://octopress.org&quot;</span><span class="nt">&gt;</span>Octopress<span class="nt">&lt;/a&gt;&lt;/span&gt;</span>
 </span><span class='line'><span class="nt">&lt;/p&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
@@ -351,7 +503,7 @@
 </pre></td><td class='code'><pre><code class='html'><span class='line'><span class="nt">&lt;p&gt;</span>
 </span><span class='line'>  <span class="nt">&lt;a</span> <span class="na">rel=</span><span class="s">&quot;license&quot;</span> <span class="na">href=</span><span class="s">&quot;http://creativecommons.org/licenses/by/4.0/&quot;</span><span class="nt">&gt;&lt;img</span> <span class="na">alt=</span><span class="s">&quot;Creative Commons License&quot;</span> <span class="na">style=</span><span class="s">&quot;border-width:0&quot;</span> <span class="na">src=</span><span class="s">&quot;https://i.creativecommons.org/l/by/4.0/88x31.png&quot;</span> <span class="nt">/&gt;&lt;/a&gt;&lt;br</span> <span class="nt">/&gt;</span>This work is licensed under a <span class="nt">&lt;a</span> <span class="na">rel=</span><span class="s">&quot;license&quot;</span> <span class="na">href=</span><span class="s">&quot;http://creativecommons.org/licenses/by/4.0/&quot;</span><span class="nt">&gt;</span>Creative Commons Attribution 4.0 International License<span class="nt">&lt;/a&gt;</span>.
 </span><span class='line'>
-</span><span class='line'>    Copyright <span class="ni">&amp;copy;</span> 2015-11-17 16:28:28 +0800 - ShunNien Yu(Allen Yu) -
+</span><span class='line'>    Copyright <span class="ni">&amp;copy;</span> 2015-11-17 17:46:19 +0800 - ShunNien Yu(Allen Yu) -
 </span><span class='line'>    <span class="nt">&lt;span</span> <span class="na">class=</span><span class="s">&quot;credit&quot;</span><span class="nt">&gt;</span>Powered by <span class="nt">&lt;a</span> <span class="na">href=</span><span class="s">&quot;http://octopress.org&quot;</span><span class="nt">&gt;</span>Octopress<span class="nt">&lt;/a&gt;&lt;/span&gt;</span>
 </span><span class='line'><span class="nt">&lt;/p&gt;</span>
 </span></code></pre></td></tr></table></div></figure>
@@ -648,122 +800,6 @@
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/11/05/in-windwos-install-ruby-on-rails/">在 Windows 安裝 Ruby on Rails</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-11-05T03:10:00+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:10 am</span></time>
-        
-           | <a href="/blog/2015/11/05/in-windwos-install-ruby-on-rails/#disqus_thread"
-             data-disqus-identifier="http://shunnien.github.io/blog/2015/11/05/in-windwos-install-ruby-on-rails/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><h2>緣起</h2>
-
-<p>在 Windows 平台上很久了，今年初為了裝一些套件，就安裝了 Ruby，結果今年都快過完了都沒去玩過，只是為了那些套件安裝順利就裝了 ruby，感覺很浪費呀，所以再裝 Rails 進來玩玩，順手記錄一下安裝的過程，為了記錄，我又重新安裝一次 ruby XD。</p>
-
-<h2>下載安裝檔案 <a href="https://www.ruby-lang.org/zh_tw/" title="Ruby Programming Language">Ruby</a></h2>
-
-<p>首先到<a href="http://rubyinstaller.org/downloads/">RubyInstaller</a>下載安裝檔案，請依照下圖指示進行。
-<img src="https://googledrive.com/host/0B24tdidnsV1vLU4yOXk5RzFGbkk" alt="RubyInstaller Index" />
-到這頁面選擇符合您自己系統的版本，以下是我的安裝版本
-<img src="https://googledrive.com/host/0B24tdidnsV1vYlhqZjJoaXNUcDQ" alt="RubyInstaller Select Version" />
-然後順便下載 DevKit，一樣選擇適合自己的版本，我是選擇 <strong>For use with Ruby 2.0 and above (x64 - 64bits only)</strong>這版本
-<img src="https://googledrive.com/host/0B24tdidnsV1vN2VCZk5ITkI1OEU" alt="Ruby DevKit" /></p>
-
-<h2>安裝 RubyInstaller</h2>
-
-<p>執行剛剛下載的 <strong>RubyInstaller</strong>
-<img src="https://googledrive.com/host/0B24tdidnsV1vd0ZMaGtCa2lUT2c" alt="RubyInstaller Install" />
-勾選接受這<strong> License</strong>
-<img src="https://googledrive.com/host/0B24tdidnsV1vWUVXNUFFbVdOd1E" alt="License" />
-選擇您想要安裝的路徑並勾選 <strong>Add Ruby executables to your PATH</strong> 這個選項，這樣安裝程式會自動設定環境變數，等下就可以直接在指令列上執行。
-<img src="https://googledrive.com/host/0B24tdidnsV1vWUVXNUFFbVdOd1E" alt="Destination" />
-然後稍微等個幾秒
-<img src="https://googledrive.com/host/0B24tdidnsV1vR0dxTFpjSTdOMVk" alt="Installing" />
-就可以看到安裝完成畫面
-<img src="https://googledrive.com/host/0B24tdidnsV1vcW40VFJXelBaWVk" alt="Completing" />
-接著我們開啟命令提示字元，或是<code>Win + R</code>輸入<code>cmd</code>，我以下畫面是使用 <a href="http://blog.miniasp.com/post/2015/09/28/Useful-tool-Cmder.aspx">cmder</a>，畫面看起來不太一樣，但是功能是相同的；命令提示字元開啟後，鍵入<code>ruby -v</code>查看一下 ruby 安裝的版本，應該會是如下圖顯示。
-<img src="https://googledrive.com/host/0B24tdidnsV1vUUZnTVNoN1lGME0" alt="Version Check Success" />
-如果出現[<em>不是內部或外部命令、可執行的程式或批次檔。</em>]這訊息，如下圖所示。
-<img src="https://googledrive.com/host/0B24tdidnsV1vd19vMmZSRm5yTlE" alt="Version Check Failure" />
-可能是剛剛沒有勾選 <strong>Add Ruby executables to your PATH</strong>造成，您可能必須手動設定環境變數，需要進入控制台->系統->進階系統設定->進階->環境變數->系統變數->找尋 <strong>Path</strong> 路徑->編輯，把您的 ruby 安裝路徑增加進去
-<img src="https://googledrive.com/host/0B24tdidnsV1vd1psdVRFajlZME0" alt="Set Path" /></p>
-
-<h2>安裝 DevKit</h2>
-
-<p>執行 DevKit-mingw64-64-4.7.2-20130224-1432-sfx.exe，這檔名超長，選擇您想放置的位置，建議放到<code>C:\RubyDevKit</code>
-<img src="https://googledrive.com/host/0B24tdidnsV1vdERtRi1jUkdtLTA" alt="Set DevKit Path" /></p>
-
-<p>如果都是按照上述建議的話，到<code>C:\RubyDevKit</code>資料夾下(您所解壓縮的位置下)<code>Ctrl + shift + mouse right click</code>選擇開啟命令視窗</p>
-
-<p><img src="https://googledrive.com/host/0B24tdidnsV1vVDBKY1pEa29pVkk" alt="手動設定" /></p>
-
-<p>執行<code>ruby dk.rb init</code>，這指令會產生<strong>config.yml</strong>這檔案，並且會偵測您 ruby 安裝的路徑，直接寫入到 config.yml 檔案中
-<img src="https://googledrive.com/host/0B24tdidnsV1vU2drbjUzZzUyRlU" alt="執行 ruby dk.rb init" /></p>
-
-<p>假如沒有偵測到您的安裝路徑，請手動更改 config.yml 這檔案，用記事本就可以開啟這檔案，按照下圖修改，請修改為您所安裝的路徑，注意路徑語法是<code>- C:/yourRubyPath</code>前面有個小破折號
-<img src="https://googledrive.com/host/0B24tdidnsV1vQXd0aTdvU0RwX0k" alt="設定 Ruby路徑" /></p>
-
-<p>然後執行以下命令，它會更動您 ruby 安裝路徑下的檔案或產生檔案</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>ruby dk.rb install</span></code></pre></td></tr></table></div></figure>
-
-
-<p><img src="https://googledrive.com/host/0B24tdidnsV1vVkVHQ0VFT0dUcXM" alt="DevKit Install" /></p>
-
-<h2>安裝 Rails</h2>
-
-<p>接下來使用<code>gem</code>來安裝，所以下指令就可以安裝完成了，直接下指令安裝 rails</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>gem install rails --no-ri --no-rdoc</span></code></pre></td></tr></table></div></figure>
-
-
-<p>安裝完成後，測試一下，看一下 rails 版本編號</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>rails -v</span></code></pre></td></tr></table></div></figure>
-
-
-<p>出現表示安裝完成了。終於弄完這篇文章了，明明裝的時候很快，弄成文章花了不少時間。</p>
-
-<h2>My Environment</h2>
-
-<ul>
-<li>OS:Win 10</li>
-</ul>
-
-
-<h2>Reference</h2>
-
-<ul>
-<li><a href="http://rubyinstaller.org/downloads/">RubyInstaller</a></li>
-<li><a href="https://www.ruby-lang.org/zh_tw/" title="Ruby Programming Language">Ruby Programming Language</a></li>
-</ul>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
     
       <a class="prev" href="/posts/2">&larr; Older</a>
@@ -779,15 +815,15 @@
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/11/17/javascript-to-json-ji-ben-guan-nian/">JavaScript to Json 基本觀念</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/11/13/the-viewbag-doesnt-exist-in-the-current-context/">Visual Studio 2015 the ViewBag Doesn't Exist in the Current Context</a>
       </li>
     
       <li class="post">
         <a href="/blog/2015/11/12/octopress-jia-ru-category-fen-lei/">Octopress 加入 Category(分類)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/11/11/litopress-geng-huan-license-footer/">Octopress 更換 License(footer)</a>
       </li>
     
   </ul>

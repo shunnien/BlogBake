@@ -9,7 +9,7 @@
   <meta name="author" content="ShunNien Yu(Allen Yu)">
 
   
-  <meta name="description" content="緣起 前陣子有個朋友跟我詢問一段 LINQ 的 code，說輸出不是他想要的值，不過當時我去倒杯水，想說回來再看的時候，他自己搞定了 XD，雖然已經解決了，但是既然都抽出時間了，就還是看一下，看到他使用了 First() 去解決，就問他怎麼不使用 FirstOrDefault ，不過那段 code &hellip;">
+  <meta name="description" content="緣起 在 Windows 平台上很久了，今年初為了裝一些套件，就安裝了 Ruby，結果今年都快過完了都沒去玩過，只是為了那些套件安裝順利就裝了 ruby，感覺很浪費呀，所以再裝 Rails 進來玩玩，順手記錄一下安裝的過程，為了記錄，我又重新安裝一次 ruby XD。 下載安裝檔案 Ruby &hellip;">
   
 
   <!-- http://t.co/dKP3o1e -->
@@ -78,6 +78,122 @@
     <div id="content">
       <div class="blog-index">
   
+  
+  
+    <article>
+      
+  <header>
+    
+      <h1 class="entry-title"><a href="/blog/2015/11/05/in-windwos-install-ruby-on-rails/">在 Windows 安裝 Ruby on Rails</a></h1>
+    
+    
+      <p class="meta">
+        
+
+
+
+
+<time class='entry-date' datetime='2015-11-05T03:10:00+08:00'><span class='date'><span class='date-month'>Nov</span> <span class='date-day'>5</span><span class='date-suffix'>th</span>, <span class='date-year'>2015</span></span> <span class='time'>3:10 am</span></time>
+        
+           | <a href="/blog/2015/11/05/in-windwos-install-ruby-on-rails/#disqus_thread"
+             data-disqus-identifier="http://shunnien.github.io/blog/2015/11/05/in-windwos-install-ruby-on-rails/">Comments</a>
+        
+      </p>
+    
+  </header>
+
+
+  <div class="entry-content"><h2>緣起</h2>
+
+<p>在 Windows 平台上很久了，今年初為了裝一些套件，就安裝了 Ruby，結果今年都快過完了都沒去玩過，只是為了那些套件安裝順利就裝了 ruby，感覺很浪費呀，所以再裝 Rails 進來玩玩，順手記錄一下安裝的過程，為了記錄，我又重新安裝一次 ruby XD。</p>
+
+<h2>下載安裝檔案 <a href="https://www.ruby-lang.org/zh_tw/" title="Ruby Programming Language">Ruby</a></h2>
+
+<p>首先到<a href="http://rubyinstaller.org/downloads/">RubyInstaller</a>下載安裝檔案，請依照下圖指示進行。
+<img src="https://googledrive.com/host/0B24tdidnsV1vLU4yOXk5RzFGbkk" alt="RubyInstaller Index" />
+到這頁面選擇符合您自己系統的版本，以下是我的安裝版本
+<img src="https://googledrive.com/host/0B24tdidnsV1vYlhqZjJoaXNUcDQ" alt="RubyInstaller Select Version" />
+然後順便下載 DevKit，一樣選擇適合自己的版本，我是選擇 <strong>For use with Ruby 2.0 and above (x64 - 64bits only)</strong>這版本
+<img src="https://googledrive.com/host/0B24tdidnsV1vN2VCZk5ITkI1OEU" alt="Ruby DevKit" /></p>
+
+<h2>安裝 RubyInstaller</h2>
+
+<p>執行剛剛下載的 <strong>RubyInstaller</strong>
+<img src="https://googledrive.com/host/0B24tdidnsV1vd0ZMaGtCa2lUT2c" alt="RubyInstaller Install" />
+勾選接受這<strong> License</strong>
+<img src="https://googledrive.com/host/0B24tdidnsV1vWUVXNUFFbVdOd1E" alt="License" />
+選擇您想要安裝的路徑並勾選 <strong>Add Ruby executables to your PATH</strong> 這個選項，這樣安裝程式會自動設定環境變數，等下就可以直接在指令列上執行。
+<img src="https://googledrive.com/host/0B24tdidnsV1vWUVXNUFFbVdOd1E" alt="Destination" />
+然後稍微等個幾秒
+<img src="https://googledrive.com/host/0B24tdidnsV1vR0dxTFpjSTdOMVk" alt="Installing" />
+就可以看到安裝完成畫面
+<img src="https://googledrive.com/host/0B24tdidnsV1vcW40VFJXelBaWVk" alt="Completing" />
+接著我們開啟命令提示字元，或是<code>Win + R</code>輸入<code>cmd</code>，我以下畫面是使用 <a href="http://blog.miniasp.com/post/2015/09/28/Useful-tool-Cmder.aspx">cmder</a>，畫面看起來不太一樣，但是功能是相同的；命令提示字元開啟後，鍵入<code>ruby -v</code>查看一下 ruby 安裝的版本，應該會是如下圖顯示。
+<img src="https://googledrive.com/host/0B24tdidnsV1vUUZnTVNoN1lGME0" alt="Version Check Success" />
+如果出現[<em>不是內部或外部命令、可執行的程式或批次檔。</em>]這訊息，如下圖所示。
+<img src="https://googledrive.com/host/0B24tdidnsV1vd19vMmZSRm5yTlE" alt="Version Check Failure" />
+可能是剛剛沒有勾選 <strong>Add Ruby executables to your PATH</strong>造成，您可能必須手動設定環境變數，需要進入控制台->系統->進階系統設定->進階->環境變數->系統變數->找尋 <strong>Path</strong> 路徑->編輯，把您的 ruby 安裝路徑增加進去
+<img src="https://googledrive.com/host/0B24tdidnsV1vd1psdVRFajlZME0" alt="Set Path" /></p>
+
+<h2>安裝 DevKit</h2>
+
+<p>執行 DevKit-mingw64-64-4.7.2-20130224-1432-sfx.exe，這檔名超長，選擇您想放置的位置，建議放到<code>C:\RubyDevKit</code>
+<img src="https://googledrive.com/host/0B24tdidnsV1vdERtRi1jUkdtLTA" alt="Set DevKit Path" /></p>
+
+<p>如果都是按照上述建議的話，到<code>C:\RubyDevKit</code>資料夾下(您所解壓縮的位置下)<code>Ctrl + shift + mouse right click</code>選擇開啟命令視窗</p>
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vVDBKY1pEa29pVkk" alt="手動設定" /></p>
+
+<p>執行<code>ruby dk.rb init</code>，這指令會產生<strong>config.yml</strong>這檔案，並且會偵測您 ruby 安裝的路徑，直接寫入到 config.yml 檔案中
+<img src="https://googledrive.com/host/0B24tdidnsV1vU2drbjUzZzUyRlU" alt="執行 ruby dk.rb init" /></p>
+
+<p>假如沒有偵測到您的安裝路徑，請手動更改 config.yml 這檔案，用記事本就可以開啟這檔案，按照下圖修改，請修改為您所安裝的路徑，注意路徑語法是<code>- C:/yourRubyPath</code>前面有個小破折號
+<img src="https://googledrive.com/host/0B24tdidnsV1vQXd0aTdvU0RwX0k" alt="設定 Ruby路徑" /></p>
+
+<p>然後執行以下命令，它會更動您 ruby 安裝路徑下的檔案或產生檔案</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>ruby dk.rb install</span></code></pre></td></tr></table></div></figure>
+
+
+<p><img src="https://googledrive.com/host/0B24tdidnsV1vVkVHQ0VFT0dUcXM" alt="DevKit Install" /></p>
+
+<h2>安裝 Rails</h2>
+
+<p>接下來使用<code>gem</code>來安裝，所以下指令就可以安裝完成了，直接下指令安裝 rails</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>gem install rails --no-ri --no-rdoc</span></code></pre></td></tr></table></div></figure>
+
+
+<p>安裝完成後，測試一下，看一下 rails 版本編號</p>
+
+<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
+</pre></td><td class='code'><pre><code class=''><span class='line'>rails -v</span></code></pre></td></tr></table></div></figure>
+
+
+<p>出現表示安裝完成了。終於弄完這篇文章了，明明裝的時候很快，弄成文章花了不少時間。</p>
+
+<h2>My Environment</h2>
+
+<ul>
+<li>OS:Win 10</li>
+</ul>
+
+
+<h2>Reference</h2>
+
+<ul>
+<li><a href="http://rubyinstaller.org/downloads/">RubyInstaller</a></li>
+<li><a href="https://www.ruby-lang.org/zh_tw/" title="Ruby Programming Language">Ruby Programming Language</a></li>
+</ul>
+
+</div>
+  
+  
+
+
+    </article>
   
   
     <article>
@@ -524,103 +640,9 @@ Organization registered identifiers 都是要輸入登記書資訊，字號的�
 
     </article>
   
-  
-    <article>
-      
-  <header>
-    
-      <h1 class="entry-title"><a href="/blog/2015/10/22/sql-server-access-to-all-field-definitions/">Sql Server 取得所有欄位定義</a></h1>
-    
-    
-      <p class="meta">
-        
-
-
-
-
-<time class='entry-date' datetime='2015-10-22T04:11:00+08:00'><span class='date'><span class='date-month'>Oct</span> <span class='date-day'>22</span><span class='date-suffix'>nd</span>, <span class='date-year'>2015</span></span> <span class='time'>4:11 am</span></time>
-        
-           | <a href="/blog/2015/10/22/sql-server-access-to-all-field-definitions/#disqus_thread"
-             data-disqus-identifier="http://shunnien.github.io/blog/2015/10/22/sql-server-access-to-all-field-definitions/">Comments</a>
-        
-      </p>
-    
-  </header>
-
-
-  <div class="entry-content"><p>把一些以前整理的東西，紀錄一下</p>
-
-<p>此部分最好在 Sql Server 2005 以上使用， Sql Server 2000 就沒使用過</p>
-
-<figure class='code'><div class="highlight"><table><tr><td class="gutter"><pre class="line-numbers"><span class='line-number'>1</span>
-<span class='line-number'>2</span>
-<span class='line-number'>3</span>
-<span class='line-number'>4</span>
-<span class='line-number'>5</span>
-<span class='line-number'>6</span>
-<span class='line-number'>7</span>
-<span class='line-number'>8</span>
-<span class='line-number'>9</span>
-<span class='line-number'>10</span>
-<span class='line-number'>11</span>
-<span class='line-number'>12</span>
-<span class='line-number'>13</span>
-<span class='line-number'>14</span>
-<span class='line-number'>15</span>
-<span class='line-number'>16</span>
-<span class='line-number'>17</span>
-<span class='line-number'>18</span>
-<span class='line-number'>19</span>
-<span class='line-number'>20</span>
-<span class='line-number'>21</span>
-<span class='line-number'>22</span>
-<span class='line-number'>23</span>
-<span class='line-number'>24</span>
-<span class='line-number'>25</span>
-<span class='line-number'>26</span>
-<span class='line-number'>27</span>
-<span class='line-number'>28</span>
-<span class='line-number'>29</span>
-<span class='line-number'>30</span>
-</pre></td><td class='code'><pre><code class=''><span class='line'>SELECT
-</span><span class='line'>CASE  a.TABLE_TYPE
-</span><span class='line'>WHEN  'BASE TABLE'  THEN '資料表'
-</span><span class='line'>WHEN 'VIEW'  THEN '檢視表'
-</span><span class='line'>END as 表格類型 ,
-</span><span class='line'>    a.TABLE_NAME                as 表格名稱,
-</span><span class='line'>    b.COLUMN_NAME               as 欄位名稱,
-</span><span class='line'>    b.DATA_TYPE                 as 資料型別,
-</span><span class='line'>    b.CHARACTER_MAXIMUM_LENGTH  as 最大長度,
-</span><span class='line'>    b.COLUMN_DEFAULT            as 預設值,
-</span><span class='line'>    b.IS_NULLABLE               as 允許空值,
-</span><span class='line'>    (
-</span><span class='line'>        SELECT
-</span><span class='line'>            value
-</span><span class='line'>        FROM
-</span><span class='line'>            fn_listextendedproperty (NULL, 'schema', 'dbo', 'table', 
-</span><span class='line'>                                     a.TABLE_NAME, 'column', default)
-</span><span class='line'>        WHERE
-</span><span class='line'>            name='MS_Description' 
-</span><span class='line'>            and objtype='COLUMN' 
-</span><span class='line'>            and objname Collate Chinese_Taiwan_Stroke_CI_AS=b.COLUMN_NAME
-</span><span class='line'>    ) as 欄位備註
-</span><span class='line'>FROM
-</span><span class='line'>    INFORMATION_SCHEMA.TABLES  a
-</span><span class='line'>    LEFT JOIN INFORMATION_SCHEMA.COLUMNS b ON (a.TABLE_NAME=b.TABLE_NAME)
-</span><span class='line'>--WHERE
-</span><span class='line'>--    TABLE_TYPE='VIEW'
-</span><span class='line'>--    TABLE_TYPE='BASE TABLE'
-</span><span class='line'>ORDER BY
-</span><span class='line'>   a.TABLE_TYPE, a.TABLE_NAME, ordinal_position</span></code></pre></td></tr></table></div></figure>
-
-</div>
-  
-  
-
-
-    </article>
-  
   <div class="pagination">
+    
+      <a class="prev" href="/posts/3">&larr; Older</a>
     
     <a href="/blog/archives">Blog Archives</a>
     
@@ -635,15 +657,15 @@ Organization registered identifiers 都是要輸入登記書資訊，字號的�
   <ul id="recent_posts">
     
       <li class="post">
+        <a href="/blog/2015/11/17/javascript-to-json-ji-ben-guan-nian/">JavaScript to Json 基本觀念</a>
+      </li>
+    
+      <li class="post">
         <a href="/blog/2015/11/13/the-viewbag-doesnt-exist-in-the-current-context/">Visual Studio 2015 the ViewBag Doesn't Exist in the Current Context</a>
       </li>
     
       <li class="post">
         <a href="/blog/2015/11/12/octopress-jia-ru-category-fen-lei/">Octopress 加入 Category(分類)</a>
-      </li>
-    
-      <li class="post">
-        <a href="/blog/2015/11/11/litopress-geng-huan-license-footer/">Octopress 更換 License(footer)</a>
       </li>
     
   </ul>
