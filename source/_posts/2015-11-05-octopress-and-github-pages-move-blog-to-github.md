@@ -86,7 +86,7 @@ git add .
 git commit -m "您所要輸入的備註內容"
 git push origin source
 ```
-![git to source](https://googledrive.com/host/0B24tdidnsV1vTnRuOVBSWGU1U3c)
+![git to source](https://googledrive.com/host/0B24tdidnsV1vME5TVzBfYWxFWXM)
 
 這樣就完成您的部落格了，接著就可以使用 markdown 語法撰寫您的文章。
 
